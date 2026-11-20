@@ -1,5 +1,7 @@
 # Home Run
 
+[Play Home Run on GitHub Pages](https://nathann-275.github.io/Homerun_DailyGame/)
+
 Home Run is a standalone baseball trivia arcade inspired by [Jumpshot](https://nathann-275.github.io/JumpShot_DailyGame/). Everyone gets the same seven at-bats each day, with 30 seconds per answer and a new deck at midnight Eastern. The game saves the current run and personal best in the browser.
 
 ## Play locally
