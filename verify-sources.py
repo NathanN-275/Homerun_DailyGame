@@ -37,7 +37,8 @@ def awards_from(page, section, year, league=""):
 
 @lru_cache
 def batting_counts(archive_bytes):
-    names, homers, hits, game_hits = {}, Counter(), Counter(), Counter()
+    names, game_hits = {}, Counter()
+    totals = {stat: Counter() for stat in ("home runs", "hits", "doubles", "triples")}
     with zipfile.ZipFile(io.BytesIO(archive_bytes)) as archive:
         for entry in archive.namelist():
             if entry.upper().endswith(".ROS"):
@@ -54,40 +55,43 @@ def batting_counts(archive_bytes):
                     event = re.match(rb"^(HR|H|S|D|T)(?=[0-9/.+;]|$)", fields[-1])
                     if event:
                         player = fields[3].decode()
-                        hits[player] += 1
+                        totals["hits"][player] += 1
                         game_hits[game, player] += 1
-                        if event[1] in (b"HR", b"H"):
-                            homers[player] += 1
-    return names, homers, hits, game_hits
+                        stat = {b"HR": "home runs", b"H": "home runs",
+                                b"D": "doubles", b"T": "triples"}.get(event[1])
+                        if stat:
+                            totals[stat][player] += 1
+    totals["hits in one game"] = Counter()
+    for (_, player), count in game_hits.items():
+        totals["hits in one game"][player] = max(count, totals["hits in one game"][player])
+    return names, totals
 
 
 def expected_answers(prompt, read_source):
     question = prompt["question"]
-    year = re.search(r"\b\d{4}\b", question)[0]
+    years = [int(year) for year in re.findall(r"\b\d{4}\b", question)]
     url = prompt["source"]["url"]
     data = read_source(url)
     category = prompt["category"]
-    if category == "batting":
-        names, homers, hits, game_hits = batting_counts(data)
-        if "six hits in a game" in question:
-            return {names[player] for (_, player), count in game_hits.items() if count >= 6}
+    if "stat" in prompt:
+        names, totals = batting_counts(data)
         mark = int(re.search(r"at least (\d+)", question)[1])
-        totals = homers if "home runs" in question else hits
-        return {names[player] for player, count in totals.items() if count >= mark}
+        return {names[player] for player, count in totals[prompt["stat"]].items() if count >= mark}
     page = data.decode("utf-8")
     if category == "franchises":
-        champion = re.search(r"<H2>World Series: (.*?) \(", page)[1]
-        return {text(champion)}
+        series = re.search(r"<H2>World Series: (.*?) \(\d+\) defeated (.*?) \(\d+\)", page)
+        return {text(name) for name in series.groups()}
     section = urlsplit(url).fragment
     if section == "A1":
         # The Hall's election-method page identifies the committee's exact class.
         election_page = read_source(prompt["source"]["corroboration"]).decode("utf-8")
         committee = election_page.split("Elected by Committee on Negro Baseball Leagues", 1)[1]
         committee = committee.split("Elected by Special Committee on Negro Leagues", 1)[0]
-        return {name for name in awards_from(page, section, year)
-                if re.search(r">\s*" + re.escape(name) + r"\s*<", committee)}
-    league = prompt["id"].rsplit("-", 1)[1].upper() if section == "A4" else ""
-    return set(awards_from(page, section, year, league))
+        electees = {normalized(text(name)) for name in re.findall(r"<h3\b[^>]*>(.*?)</h3>", committee)}
+        return {name for year in range(years[0], years[-1] + 1) for name in awards_from(page, section, year)
+                if normalized(name) in electees}
+    return {name for year in range(years[0], years[-1] + 1)
+            for name in awards_from(page, section, year)}
 
 
 def main(cache):

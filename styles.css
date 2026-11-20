@@ -65,14 +65,35 @@ body{margin:0;background:radial-gradient(ellipse at 50% -15%,#30445a 0,#172738 3
 .result-details.visible{margin-top:9px;padding:12px;background:#10202b;border-left:3px solid var(--gold)}
 .result-details strong{color:var(--gold)}
 .postgame{margin:18px 0;background:#172738;border:2px solid #526475;box-shadow:0 6px 0 #09131d;padding:clamp(12px,2.4vw,22px)}
+.finish-card{text-align:center;padding:10px 0 14px}
 .postgame h2{font:18px "Press Start 2P",monospace;line-height:1.7;color:var(--gold);margin:0 0 12px}
 .postgame .final-score{font:34px "Press Start 2P",monospace;color:#fff}
 .postgame p{font-size:12px;color:#b8c5cd;line-height:1.7}
 .best-line{color:var(--green)!important}
-.hit-log{display:grid;gap:6px;margin:18px 0}
-.hit-row{display:grid;grid-template-columns:75px minmax(0,1fr) auto;gap:12px;border-top:1px solid #435668;padding:8px 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
-.hit-row a{color:#9ecbfd;text-decoration:underline;text-underline-offset:2px}
-.hit-row em{color:var(--gold);font-style:normal}
+.hit-log{margin:8px 0;border:1px solid #435668;background:#12212e}
+.hit-log h3{margin:0;padding:16px;font:10px/1.6 "Press Start 2P",monospace;color:var(--gold)}
+.answer-review{border-top:1px solid #435668}
+.answer-review summary{position:relative;display:grid;gap:6px;padding:14px 40px 14px 16px;line-height:1.5;list-style:none;cursor:pointer}
+.answer-review summary::-webkit-details-marker{display:none}
+.answer-review summary::after{content:"+";position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:22px}
+.answer-review[open] summary::after{content:"−"}
+.answer-review summary:hover{background:#ffffff0a}
+.review-answer{font-size:12px;color:var(--tier-color,var(--muted))}
+[data-tier="walk"]{--tier-color:#b6cbdb}
+[data-tier="single"]{--tier-color:#82b8ed}
+[data-tier="double"]{--tier-color:#f2c665}
+[data-tier="home-run"]{--tier-color:#91f4ba}
+[data-tier="out"]{--tier-color:#ffa08e}
+.answer-browser{padding:0 16px 12px}
+.tier-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tier-filter{min-height:44px;padding:0 10px;border:1px solid #536474;background:#192c3d;color:var(--tier-color,var(--cream));font:500 12px "DM Mono",monospace;cursor:pointer}
+.tier-filter[aria-pressed="true"]{border-color:currentColor;background:#293f51}
+.answer-search{width:100%;min-height:46px;padding:0 10px;border:1px solid #607487;background:#0e1a26;color:var(--cream);font:16px "DM Mono",monospace}
+.answer-results{padding:0;margin:8px 0;list-style:none}
+.answer-results li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px 0;border-bottom:1px solid #293d4f;font-size:14px;align-items:center;overflow-wrap:anywhere}
+.answer-results li[hidden]{display:none}
+.answer-tier{color:var(--tier-color);font-size:12px;text-align:right}
+.answer-sources a{color:#9ecbfd;text-underline-offset:2px}
 .sources-credit{border-top:1px solid #435668;padding-top:14px!important;font-size:10px!important}
 .sources-credit a{color:#9ecbfd}
 footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 12px;color:#7c8a95;font-size:10px;letter-spacing:.05em;padding:17px 3px 0}
@@ -83,10 +104,10 @@ footer span{flex:1 1 18rem}
 [data-outcome="single"] .baseball{opacity:1;animation:single-flight 1.15s ease-out forwards}
 [data-outcome="double"] .baseball{opacity:1;animation:double-flight 1.15s ease-out forwards}
 [data-outcome="home-run"] .baseball{opacity:1;animation:home-flight 1.35s ease-out forwards}
-@keyframes walk-first{to{transform:translate(749px,400px)}}
-@keyframes single-flight{0%{transform:translate(540px,460px)}60%{transform:translate(750px,290px)}100%{transform:translate(700px,355px)}}
-@keyframes double-flight{0%{transform:translate(540px,460px)}65%{transform:translate(800px,200px)}100%{transform:translate(500px,245px)}}
-@keyframes home-flight{0%{transform:translate(540px,460px)}75%{transform:translate(250px,95px) scale(.7)}100%{transform:translate(245px,35px) scale(.4)}}
+@keyframes walk-first{to{transform:translate(731px,363px)}}
+@keyframes single-flight{0%{transform:translate(514px,447px)}60%{transform:translate(648px,303px)}100%{transform:translate(620px,320px)}}
+@keyframes double-flight{0%{transform:translate(514px,447px)}65%{transform:translate(736px,194px)}100%{transform:translate(500px,249px)}}
+@keyframes home-flight{0%{transform:translate(514px,447px)}75%{transform:translate(390px,109px) scale(.7)}100%{transform:translate(371px,45px) scale(.4)}}
 @keyframes base-flash{50%{opacity:.2}}
 @keyframes crowd-shift{to{background-position:8px 0}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
@@ -113,13 +134,13 @@ footer span{flex:1 1 18rem}
 [data-outcome="foul"] .baseball { animation: foul-ball 1.15s ease-out both; }
 [data-outcome="strike"] .umpire use { animation: umpire-call .9s steps(2,end) both; }
 @keyframes strike-pitch {
-  0% { opacity: 1; transform: translate(500px,345px); }
-  90% { opacity: 1; transform: translate(482px,476px); }
-  100% { opacity: 0; transform: translate(482px,476px); }
+  0% { opacity: 1; transform: translate(500px,339px); }
+  90% { opacity: 1; transform: translate(500px,496px); }
+  100% { opacity: 0; transform: translate(500px,496px); }
 }
 @keyframes foul-ball {
-  0% { opacity: 1; transform: translate(540px,460px); }
-  100% { opacity: 1; transform: translate(970px,530px) scale(.6); }
+  0% { opacity: 1; transform: translate(514px,447px); }
+  100% { opacity: 1; transform: translate(940px,460px) scale(.6); }
 }
 @keyframes umpire-call { 50%, 100% { transform: translateY(-7px); } }
 .sources-credit { color: var(--muted); line-height: 1.6; }
@@ -150,6 +171,4 @@ footer span{flex:1 1 18rem}
   .scoreboard-ribbon b { font-size: 8px; }
   .stadium-caption { padding-inline: 8px; }
   .question-copy h1 { font: 700 clamp(16px,4.2vw,20px)/1.4 "DM Mono",ui-monospace,monospace; }
-  .hit-row { grid-template-columns: minmax(0,1fr) auto; gap: 4px 10px; }
-  .hit-row > div { grid-column: 1 / -1; grid-row: 2; }
 }

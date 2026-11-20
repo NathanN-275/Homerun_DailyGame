@@ -31,7 +31,7 @@
         <div class="field-wrap" id="field-wrap">
           <svg class="field" viewBox="0 0 1000 560" role="img" aria-labelledby="field-title field-desc" preserveAspectRatio="xMidYMid meet">
             <title id="field-title">A pixel art ballpark, viewed from behind home plate</title>
-            <desc id="field-desc">The full diamond, pitcher, batter, fielders and umpire are visible. The view is elevated and angled toward third base.</desc>
+            <desc id="field-desc">An elevated view from behind home plate shows the full diamond, pitcher, batter, fielders and umpire.</desc>
             <defs>
               <pattern id="grass" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#317d5d"/><rect width="14" height="28" fill="#398765"/><path d="M0 0h28M0 14h28" stroke="#2b7154" stroke-width="2" opacity=".5"/></pattern>
               <pattern id="stands" width="38" height="24" patternUnits="userSpaceOnUse">
@@ -50,37 +50,39 @@
             <path d="M0 0h1000v113H0z" fill="url(#stands)"/>
             <path d="M0 99h1000v22H0z" fill="#101b25" stroke="#627382" stroke-width="5"/>
             <path d="M0 120h1000v440H0z" fill="url(#grass)"/>
-            <g transform="matrix(1 0 .22 1 -110 0)">
-            <path d="M88 474Q95 180 500 140Q905 180 912 474L500 525Z" fill="#438d68" stroke="#edcf91" stroke-width="8"/>
-            <path d="M220 402L500 224L780 402L500 520Z" fill="#ab8255" stroke="#e7c58b" stroke-width="7"/>
-            <path d="M254 398L500 247L746 398L500 503Z" fill="#438d68" stroke="#f0ddae" stroke-width="4"/>
-            <path d="M254 398L500 247L746 398L500 503Z" fill="none" stroke="#f3e9cf" stroke-width="3"/>
-            <path d="M500 486l20 14-20 14-20-14z" fill="#fff2d3"/>
-            <rect x="240" y="389" width="22" height="22" fill="#fff2d3" transform="rotate(45 251 400)"/>
-            <rect x="489" y="236" width="22" height="22" fill="#fff2d3" transform="rotate(45 500 247)"/>
-            <rect x="738" y="389" width="22" height="22" fill="#fff2d3" transform="rotate(45 749 400)"/>
-            <ellipse cx="500" cy="373" rx="57" ry="23" fill="#c39b6a" stroke="#f0d09a" stroke-width="4"/>
-            <circle cx="500" cy="371" r="8" fill="#fff2d3"/>
-            <path d="M96 474Q122 252 250 205M904 474Q878 252 750 205" fill="none" stroke="#fff1d4" stroke-width="3" stroke-dasharray="12 7"/>
-            <path d="M90 474L500 525L910 474" fill="none" stroke="#fff1d4" stroke-width="5"/>
-            <path d="M151 407Q194 397 237 411L230 464Q191 478 151 463Z" fill="#d3b38a" stroke="#704d34" stroke-width="5"/>
-            <path d="M84 423h70v50H84z" fill="#c52d34" stroke="#f1d7a1" stroke-width="5"/>
-            <path d="M862 423h70v50h-70z" fill="#c52d34" stroke="#f1d7a1" stroke-width="5"/>
+            <path d="M98 299C180 183 328 143 500 143S820 183 902 299L500 496Z" fill="#438d68"/>
+            <path d="M98 299C180 183 328 143 500 143S820 183 902 299" fill="none" stroke="#bc9162" stroke-width="24"/>
+            <path d="M98 293C180 177 328 137 500 137S820 177 902 293" fill="none" stroke="#194737" stroke-width="12"/>
+            <path d="M98 287C180 171 328 131 500 131S820 171 902 287" fill="none" stroke="#e7c58b" stroke-width="4"/>
+            <path d="M500 518L249 385Q281 297 410 232Q500 197 590 232Q719 297 751 385Z" fill="#b88958"/>
+            <path d="M500 474L292 379L500 267L708 379Z" fill="#438d68"/>
+            <path d="M98 299L500 496L902 299" fill="none" stroke="#fff1d4" stroke-width="4"/>
+            <path d="M98 299V269M902 299V269" fill="none" stroke="#f2c665" stroke-width="6"/>
+            <ellipse cx="500" cy="357" rx="46" ry="17" fill="#c39b6a" stroke="#9d724b" stroke-width="3"/>
+            <path d="M490 352h20" stroke="#fff2d3" stroke-width="3"/>
+            <path d="M257 383l12-7 12 7-12 7zM488 249l12-7 12 7-12 7zM719 383l12-7 12 7-12 7z" fill="#fff2d3"/>
+            <path d="M489 489h22v6l-11 8-11-8z" fill="#fff2d3"/>
+            <path d="M469 483h14v20h-14zM517 483h14v20h-14z" fill="none" stroke="#f5d6a8" stroke-width="2"/>
             <g id="base-state" class="base-state">
-              <circle cx="500" cy="247" r="15" data-base="second"/>
-              <circle cx="749" cy="400" r="15" data-base="first"/>
+              <circle cx="500" cy="249" r="12" data-base="second"/>
+              <circle cx="731" cy="383" r="12" data-base="first"/>
             </g>
-            <g class="sprite fielder fielder-lf" transform="translate(207 291)"><use href="#blue-player"/></g>
-            <g class="sprite fielder fielder-cf" transform="translate(500 208)"><use href="#blue-player"/></g>
-            <g class="sprite fielder fielder-rf" transform="translate(793 291)"><use href="#blue-player"/></g>
-            <g class="sprite fielder fielder-ss" transform="translate(382 306)"><use href="#blue-player"/></g>
-            <g class="sprite fielder fielder-2b" transform="translate(618 306)"><use href="#blue-player"/></g>
-            <g class="sprite pitcher" transform="translate(500 347)"><use href="#blue-player"/></g>
-            <g class="sprite batter" transform="translate(547 458)"><use href="#red-player"/><path d="M-4 6l-28-39 6-5 30 37" stroke="#e0bb72" stroke-width="6"/></g>
-            <g class="sprite umpire" transform="translate(462 477)"><use href="#umpire-player"/></g>
-            <g id="runner" class="sprite runner" transform="translate(547 458)"><use href="#red-player"/></g>
+            <g class="sprite fielder" transform="translate(223 267) scale(.8)"><use href="#blue-player"/></g>
+            <g class="sprite fielder" transform="translate(500 194) scale(.76)"><use href="#blue-player"/></g>
+            <g class="sprite fielder" transform="translate(777 267) scale(.8)"><use href="#blue-player"/></g>
+            <g class="sprite fielder" transform="translate(380 299) scale(.86)"><use href="#blue-player"/></g>
+            <g class="sprite fielder" transform="translate(620 299) scale(.86)"><use href="#blue-player"/></g>
+            <g class="sprite fielder" transform="translate(301 341) scale(.9)"><use href="#blue-player"/></g>
+            <g class="sprite fielder" transform="translate(699 341) scale(.9)"><use href="#blue-player"/></g>
+            <g class="sprite pitcher" transform="translate(500 338)"><use href="#blue-player"/></g>
+            <g class="sprite batter" transform="translate(536 463)">
+              <use href="#red-player"/>
+              <path d="M-9-8L-17-4L-20-10" fill="none" stroke="#d6a26f" stroke-width="5"/>
+              <path d="M-17-5L-30-24L-26-27L-13-8Z" fill="#e0bb72" stroke="#624f38" stroke-width="1.5"/>
+            </g>
+            <g class="sprite umpire" transform="translate(486 514) scale(.88)"><use href="#umpire-player"/></g>
+            <g id="runner" class="sprite runner" transform="translate(536 463)"><use href="#red-player"/></g>
             <g id="baseball" class="baseball"><circle r="9"/><path d="M-4-5q8 5 8 10M4-5q-8 5-8 10" fill="none" stroke="#c73b42" stroke-width="1.8"/></g>
-            </g>
             <g class="field-overlay" aria-hidden="true"><rect x="30" y="23" width="200" height="36" fill="#0d1822" stroke="#a9c0c4" stroke-width="2"/><text x="130" y="47" text-anchor="middle">RETRO PARK · EST. 1903</text></g>
             <g id="sprite-defs" style="display:none">
               <g id="blue-player"><rect x="-8" y="-26" width="16" height="10" fill="#d6a26f"/><rect x="-11" y="-37" width="22" height="8" fill="#2254a6"/><rect x="-10" y="-16" width="20" height="21" fill="#2765bb"/><rect x="-9" y="4" width="7" height="16" fill="#24354c"/><rect x="3" y="4" width="7" height="16" fill="#24354c"/><rect x="-11" y="19" width="9" height="5" fill="#d9d6ce"/><rect x="3" y="19" width="9" height="5" fill="#d9d6ce"/><rect x="-16" y="-11" width="6" height="14" fill="#d6a26f"/><rect x="10" y="-11" width="6" height="14" fill="#d6a26f"/></g>
@@ -121,7 +123,7 @@
         <div class="result-details" id="result-details" aria-live="polite"></div>
       </section>
 
-      <section class="postgame hidden" id="postgame" aria-live="polite"></section>
+      <section class="postgame hidden" id="postgame" aria-labelledby="final-heading"></section>
 
       <footer class="sources-credit">
         <span>The information used here was obtained free of charge from and is copyrighted by Retrosheet. Interested parties may contact Retrosheet at <a href="https://www.retrosheet.org/">www.retrosheet.org</a>.</span>

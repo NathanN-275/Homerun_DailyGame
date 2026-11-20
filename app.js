@@ -3,7 +3,7 @@
   const ROUND_MS = 30_000;
   const ANIMATION_MS = 1_350;
   const STORAGE_KEY = "homerun.daily.v1";
-  const {resolveGuess,etDate,dailyIndex,pointValue,answerOutcome,chooseTimeout}=window.HomerunCore;
+  const {normalize,resolveGuess,etDate,dailyIndex,pointValue,answerOutcome,chooseTimeout}=window.HomerunCore;
   const $ = id => document.getElementById(id);
   const elements = {
     panel:$('game-panel'),intro:$('intro-card'),start:$('start-button'),form:$('answer-form'),input:$('answer-input'),
@@ -53,7 +53,7 @@
     elements.inning.textContent=game.phase==="ready"?"PLAY BALL":game.phase==="result"?"RESULT":"7 AT-BATS";
     if(!question) return;
     elements.title.textContent=question.question;
-    elements.hint.textContent=question.rarity==="player-name"?"Type the player. A clear typo correction keeps your at-bat alive.":"One answer. Thirty seconds. Deep cuts earn more.";
+    elements.hint.textContent="Name any one valid answer. Rarer answers score more.";
     elements.category.textContent=categories[question.category]||question.category.toUpperCase();
     elements.counter.textContent=`AT-BAT ${String(game.questionIndex+1).padStart(2,"0")} / ${TOTAL}`;
     elements.form.classList.toggle("hidden",game.phase!=="playing");
@@ -144,26 +144,80 @@
   }
   function renderPostgame() {
     elements.form.classList.add("hidden");
-    const rows=deckFor(game.date).map((question,index)=>{
+    const rows=deckFor(game.date).map((scheduledQuestion,index)=>{
       const hit=game.hits[index];
-      const answers=question.answers.map(answer=>`${escapeHTML(answer.name)} (${pointValue(answer.tier)})`).join(", ");
-      return `<div class="hit-row">
-        <span>AT-BAT ${String(index+1).padStart(2,"0")}</span>
-        <div><strong>${escapeHTML(question.question)}</strong><br>${answers}<br>
-          <a href="${escapeHTML(question.source.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(question.source.title)}</a> ·
-          ${question.source.corroboration ? `<a href="${escapeHTML(question.source.corroboration)}" target="_blank" rel="noopener noreferrer">Baseball Hall of Fame</a> · ` : ""}
-          <a href="${escapeHTML(question.furtherReading)}" target="_blank" rel="noopener noreferrer">Baseball Reference</a>
+      const question=hit?.question||scheduledQuestion;
+      const accepted=question.answers.find(answer=>answer.name===hit?.answer);
+      const answers=[...question.answers].sort((left,right)=>
+        pointValue(right.tier)-pointValue(left.tier)||left.name.localeCompare(right.name));
+      const filters=["all","home-run","double","single","walk"].map(tier=>{
+        const count=tier==="all"?answers.length:answers.filter(answer=>answer.tier===tier).length;
+        const label=tier==="all"?"All":answerOutcome(tier).label;
+        return `<button type="button" class="tier-filter" data-tier="${tier}" aria-pressed="${tier==="all"}">${label} ${count}</button>`;
+      }).join("");
+      const entries=answers.map(answer=>{
+        const searchText=normalize([answer.name,...answer.aliases].join(" "));
+        return `<li data-tier="${answer.tier}" data-search="${escapeHTML(searchText)}"><span>${escapeHTML(answer.name)}</span>
+          <span class="answer-tier">${answerOutcome(answer.tier).label} · ${pointValue(answer.tier)} pts</span></li>`;
+      }).join("");
+      return `<details class="answer-review">
+        <summary>
+          <strong>${String(index+1).padStart(2,"0")} · ${escapeHTML(question.question)}</strong>
+          <span class="review-answer" data-tier="${accepted?.tier||"out"}">
+            ${hit?.answer?`Your answer: ${escapeHTML(hit.answer)} · `:""}${escapeHTML(hit?.outcome||"TIMEOUT")} +${hit?.points||0}
+          </span>
+        </summary>
+        <div class="answer-browser">
+          <div class="tier-filters" role="group" aria-label="Filter answers for at-bat ${index+1}">${filters}</div>
+          <label class="sr-only" for="answer-search-${index}">Search answers for at-bat ${index+1}</label>
+          <input type="search" id="answer-search-${index}" class="answer-search" placeholder="Search answers…" autocomplete="off">
+          <ul class="answer-results">${entries}</ul>
+          <p class="answer-list-status" aria-live="polite">${answers.length} answers</p>
+          <p class="answer-sources">
+            <a href="${escapeHTML(question.source.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(question.source.title)}</a>
+            ${question.source.corroboration ? ` · <a href="${escapeHTML(question.source.corroboration)}" target="_blank" rel="noopener noreferrer">Baseball Hall of Fame</a>` : ""}
+            · <a href="${escapeHTML(question.furtherReading)}" target="_blank" rel="noopener noreferrer">Baseball Reference</a>
+          </p>
         </div>
-        <em>${escapeHTML(hit?.outcome||"TIMEOUT")} +${hit?.points||0}</em>
-      </div>`;
+      </details>`;
     }).join("");
-    elements.postgame.innerHTML=`<h2>FINAL SCORE</h2><div class="final-score">${String(game.score).padStart(3,"0")}</div><p class="best-line">PERSONAL BEST · ${String(store.best||game.score).padStart(3,"0")}</p><p>That’s your game for ${escapeHTML(game.date)}. The next daily game opens at midnight Eastern.</p><div class="hit-log">${rows}</div>`;
+    elements.postgame.innerHTML=`
+      <div class="finish-card">
+        <h2 id="final-heading">FINAL SCORE</h2>
+        <div class="final-score">${String(game.score).padStart(3,"0")}</div>
+        <p class="best-line">PERSONAL BEST · ${String(store.best||game.score).padStart(3,"0")}</p>
+        <p>The next daily game opens at midnight Eastern.</p>
+      </div>
+      <section class="hit-log" aria-labelledby="review-heading">
+        <h3 id="review-heading">REVIEW YOUR AT-BATS</h3>
+        ${rows}
+      </section>`;
     elements.score.textContent=String(game.score).padStart(3,"0");
     elements.atBat.textContent="07";elements.status.textContent="FINAL";elements.inning.textContent="GAME OVER";
+  }
+  function filterReview(event) {
+    const button=event.target.closest(".tier-filter");
+    if(event.type==="click"?!button:!event.target.matches(".answer-search")) return;
+    const review=event.target.closest(".answer-review");
+    if(button) {
+      for(const filter of review.querySelectorAll(".tier-filter")) {
+        filter.setAttribute("aria-pressed",String(filter===button));
+      }
+    }
+    const tier=review.querySelector('.tier-filter[aria-pressed="true"]').dataset.tier;
+    const query=normalize(review.querySelector(".answer-search").value);
+    let count=0;
+    for(const entry of review.querySelectorAll(".answer-results li")) {
+      entry.hidden=(tier!=="all"&&entry.dataset.tier!==tier)||!entry.dataset.search.includes(query);
+      if(!entry.hidden) count++;
+    }
+    review.querySelector(".answer-list-status").textContent=count===0?"No matching answers.":`${count} ${count===1?"answer":"answers"}`;
   }
   function escapeHTML(value) { return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char])); }
   elements.start.addEventListener("click",startGame);
   elements.form.addEventListener("submit",submit);
+  elements.postgame.addEventListener("click",filterReview);
+  elements.postgame.addEventListener("input",filterReview);
   setDate();
   render();
   tick();

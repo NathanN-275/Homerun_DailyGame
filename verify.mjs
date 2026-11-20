@@ -21,7 +21,8 @@ for(const deck of decks){
   assert.deepEqual(Array.from(deck.slice(2).map(q=>q.category)),["batting","pitching","awards","franchises","postseason"]);
   for(const prompt of deck){
     assert.ok(prompt.source.title&&prompt.source.url&&prompt.source.cutoff,`source and cutoff for ${prompt.id}`);
-    assert.ok(prompt.answers.length,`answers for ${prompt.id}`);
+    assert.ok(prompt.answers.length>=2,`multiple valid answers for ${prompt.id}`);
+    assert.equal(new Set(prompt.answers.map(answer=>core.normalize(answer.name))).size,prompt.answers.length);
     for(const answer of prompt.answers){
       assert.ok(core.POINTS[answer.tier],`tier for ${prompt.id}/${answer.name}`);
       assert.ok(answer.aliases.includes(answer.name),`canonical alias for ${prompt.id}/${answer.name}`);
@@ -52,6 +53,9 @@ assert.equal(core.dailyIndex("2026-12-17"),0,"the daily schedule repeats after 2
 assert.equal(core.dailyIndex("2026-11-20"),1,"midnight Eastern selects the next daily deck");
 assert.equal(core.resolveGuess("Waner",all.find(q=>q.id==="batting-27").answers).kind,"ambiguous");
 assert.equal(core.resolveGuess("Sox",all.find(q=>q.id==="franchise-2005").answers).kind,"incorrect");
+const batting1999=all.find(q=>q.id==="batting-2");
+assert.equal(core.resolveGuess("Big Mac",batting1999.answers).answer.name,"Mark McGwire");
+assert.equal(core.resolveGuess("Sammy Sosa",batting1999.answers).answer.name,"Sammy Sosa");
 
 // Run the actual game controller against the markup IDs with a deterministic clock and storage.
 let now=Date.parse("2026-11-20T04:50:00Z");
@@ -108,7 +112,7 @@ function expectOutcome(guess,outcome,score,base) {
   assert.equal(browser.nodes.stadium.dataset.outcome,"");
 }
 expectOutcome("Buck Leonar","double",100,"second");
-expectOutcome("Leroy Paige","walk",110,"first");
+expectOutcome("Derek Jeter","walk",110,"first");
 expectOutcome("Big Mac","walk",120,"first");
 expectOutcome("Tom Glavine","single",170,"first");
 for(const [value,outcome] of [[0,"strike"],[.99,"foul"]]) {
@@ -128,6 +132,10 @@ expectOutcome("Scott Brosius","home-run",370);
 browser=loadGame();
 assert.match(browser.nodes.postgame.innerHTML,/PERSONAL BEST · 370/);
 assert.match(browser.nodes.postgame.innerHTML,/STRIKE \+0[\s\S]*FOUL \+0/);
+assert.equal([...browser.nodes.postgame.innerHTML.matchAll(/<details class="answer-review">/g)].length,7);
+for(const [label,points] of [["WALK",10],["SINGLE",50],["DOUBLE",100],["HOME RUN",200]]) {
+  assert.match(browser.nodes.postgame.innerHTML,new RegExp(`${label} · ${points} pts`));
+}
 browser.nodes["start-button"].events.click();
 assert.equal(browser.nodes.score.textContent,"370");
 assert.equal(browser.nodes["game-status"].textContent,"FINAL");

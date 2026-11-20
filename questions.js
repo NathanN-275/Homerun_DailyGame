@@ -1,8 +1,6 @@
 /*
- * Editorial daily bank: 28 seasons × seven prompts. The MVP, Cy Young,
- * Rookie of the Year, batting record, franchise and World Series fields are
- * stored as answer sets so the game can reveal accepted names and aliases.
- * Season records stop at 2025; each row carries its own source and cutoff.
+ * Seven open-answer prompts per day. Season records stop at 2025.
+ * Retrosheet supplies the qualifying players and teams. Scoring tiers are editorial.
  */
 (() => {
   const retrosheetAwards = "https://www.retrosheet.org/boxesetc/MISC/XOH.htm";
@@ -12,17 +10,19 @@
     "Mark McGwire":["Big Mac"], "David Ortiz":["Big Papi"], "Randy Johnson":["Big Unit","The Big Unit"],
     "Felix Hernandez":["King Felix"], "Giancarlo Stanton":["Mike Stanton"], "R.A. Dickey":["RA Dickey"],
     "CC Sabathia":["C.C. Sabathia"], "Ronald Acuna Jr.":["Ronald Acuna"], "Michael Harris II":["Michael Harris"],
-    "Ken Griffey Jr.":["Ken Griffey","Junior","The Kid"], "Babe Ruth":["George Herman Ruth","The Bambino"]
+    "Ken Griffey Jr.":["Ken Griffey","Junior","The Kid"], "Babe Ruth":["George Herman Ruth","The Bambino"],
+    "Satchel Paige":["Leroy Paige"], "Cool Papa Bell":["James Bell","Cool Papa"], "Pop Lloyd":["John Henry Lloyd"],
+    "Paul Waner":["Big Poison"], "Lloyd Waner":["Little Poison"]
   };
   const years = Array.from({length:28}, (_, i) => 1998+i);
   const source = (title, url, cutoff="2025 season") => ({title, url, cutoff});
-  const record = (id, category, question, answers, details, ref, rarity) => ({
+  const record = (id, category, question, answers, details, ref) => ({
     id, category, question,
     answers:answers.map(([name,tier,aliases])=>({
       name,tier,aliases:[...new Set([name,...(playerAliases[name]||[]),...(aliases||[])])],
       allowSurname:category!=="franchises"
     })),
-    details, source:ref, furtherReading:bRef(answers[0][0]), rarity
+    details, source:ref, furtherReading:bRef(answers[0][0])
   });
   const answer = (name,tier="walk",aliases=[]) => [name,tier,aliases];
   const mvp = [
@@ -73,14 +73,35 @@
     ["Michael Harris II","Julio Rodriguez"],["Corbin Carroll","Gunnar Henderson"],
     ["Paul Skenes","Luis Gil"],["Drake Baldwin","Nick Kurtz"]
   ];
-  const champions = [
-    "New York Yankees","New York Yankees","New York Yankees","Arizona Diamondbacks",
-    "Anaheim Angels","Florida Marlins","Boston Red Sox","Chicago White Sox",
-    "St. Louis Cardinals","Boston Red Sox","Philadelphia Phillies","New York Yankees",
-    "San Francisco Giants","St. Louis Cardinals","San Francisco Giants","Boston Red Sox",
-    "San Francisco Giants","Kansas City Royals","Chicago Cubs","Houston Astros",
-    "Boston Red Sox","Washington Nationals","Los Angeles Dodgers","Atlanta Braves",
-    "Houston Astros","Texas Rangers","Los Angeles Dodgers","Los Angeles Dodgers"
+  const worldSeriesTeams = [
+    ["New York Yankees", "San Diego Padres"],
+    ["New York Yankees", "Atlanta Braves"],
+    ["New York Yankees", "New York Mets"],
+    ["Arizona Diamondbacks", "New York Yankees"],
+    ["Anaheim Angels", "San Francisco Giants"],
+    ["Florida Marlins", "New York Yankees"],
+    ["Boston Red Sox", "St. Louis Cardinals"],
+    ["Chicago White Sox", "Houston Astros"],
+    ["St. Louis Cardinals", "Detroit Tigers"],
+    ["Boston Red Sox", "Colorado Rockies"],
+    ["Philadelphia Phillies", "Tampa Bay Rays"],
+    ["New York Yankees", "Philadelphia Phillies"],
+    ["San Francisco Giants", "Texas Rangers"],
+    ["St. Louis Cardinals", "Texas Rangers"],
+    ["San Francisco Giants", "Detroit Tigers"],
+    ["Boston Red Sox", "St. Louis Cardinals"],
+    ["San Francisco Giants", "Kansas City Royals"],
+    ["Kansas City Royals", "New York Mets"],
+    ["Chicago Cubs", "Cleveland Indians"],
+    ["Houston Astros", "Los Angeles Dodgers"],
+    ["Boston Red Sox", "Los Angeles Dodgers"],
+    ["Washington Nationals", "Houston Astros"],
+    ["Los Angeles Dodgers", "Tampa Bay Rays"],
+    ["Atlanta Braves", "Houston Astros"],
+    ["Houston Astros", "Philadelphia Phillies"],
+    ["Texas Rangers", "Arizona Diamondbacks"],
+    ["Los Angeles Dodgers", "New York Yankees"],
+    ["Los Angeles Dodgers", "Toronto Blue Jays"]
   ];
   const worldSeriesMvp = [
     "Scott Brosius","Mariano Rivera","Derek Jeter",["Randy Johnson","Curt Schilling"],"Troy Glaus","Josh Beckett",
@@ -90,34 +111,64 @@
     "Jeremy Pena","Corey Seager","Freddie Freeman","Yoshinobu Yamamoto"
   ];
   const battingRows = [
-    ["Who hit at least 70 home runs in the 1998 season?",[["Mark McGwire","walk",["Big Mac"]]],"70 home runs, then a major-league single-season record."],
-    ["Who hit at least 63 home runs in the 1999 season?",[["Mark McGwire","single",["Big Mac"]],["Sammy Sosa","walk"]],"McGwire hit 65 and Sosa hit 63."],
-    ["Who hit at least 73 home runs in the 2001 season?",[["Barry Bonds","walk"]],"Bonds set the major-league single-season record with 73."],
-    ["Who hit at least 58 home runs in the 2006 season?",[["Ryan Howard","single"]],"Howard hit 58 for Philadelphia."],
-    ["Who hit at least 59 home runs in the 2017 season?",[["Giancarlo Stanton","single"]],"Stanton led the majors with 59."],
-    ["Who hit at least 62 home runs in the 2022 season?",[["Aaron Judge","walk"]],"Judge set the American League single-season record."],
-    ["Who hit at least 58 home runs in the 2024 season?",[["Aaron Judge","walk"]],"Judge led the majors with 58."],
-    ["Name an AL or NL hitter with at least 56 home runs in 2025.",[["Cal Raleigh","walk"],["Kyle Schwarber","double"]],"Raleigh hit 60 for Seattle and Schwarber hit 56 for Philadelphia."],
-    ["Who hit at least 60 home runs in the 1927 season?",[["Babe Ruth","walk"]],"Ruth's 60 stood as the record until 1961."],
-    ["Who hit at least 61 home runs in the 1961 season?",[["Roger Maris","single"]],"Maris broke Ruth's single-season record."],
-    ["Who hit at least 58 home runs in the 1932 season?",[["Jimmie Foxx","double"]],"Foxx hit 58, an American League record at the time."],
-    ["Who hit at least 56 home runs in the 1930 season?",[["Hack Wilson","home-run"]],"Wilson hit 56 and drove in a still-standing 191 runs."],
-    ["Who hit at least 58 home runs in the 1938 season?",[["Hank Greenberg","double"]],"Greenberg hit 58 for Detroit."],
-    ["Name an AL or NL hitter with at least 51 home runs in 1947.",[["Johnny Mize","home-run"],["Ralph Kiner","double"]],"Mize and Kiner shared the major league lead with 51 each."],
-    ["Who hit at least 52 home runs in the 1956 season?",[["Mickey Mantle","walk"]],"Mantle hit 52 while winning the Triple Crown."],
-    ["Who hit at least 52 home runs in the 1965 season?",[["Willie Mays","single"]],"Mays hit 52 for San Francisco."],
-    ["Who hit at least 52 home runs in the 1996 season?",[["Mark McGwire","walk",["Big Mac"]]],"McGwire hit 52 for Oakland."],
-    ["Who hit at least 50 home runs in the 2000 season?",[["Sammy Sosa","single"]],"Sosa hit 50 for the Cubs."],
-    ["Who hit at least 51 home runs in the 2005 season?",[["Andruw Jones","double"]],"Jones hit 51 for Atlanta."],
-    ["Who hit at least 54 home runs in the 2007 season?",[["Alex Rodriguez","walk",["A-Rod"]]],"Rodriguez hit 54 for the Yankees."],
-    ["Who hit at least 54 home runs in the 2010 season?",[["Jose Bautista","double"]],"Bautista led the majors with 54."],
-    ["Who hit at least 53 home runs in the 2013 season?",[["Chris Davis","double"]],"Davis led the majors with 53."],
-    ["Who hit at least 59 home runs in the 1921 season?",[["Babe Ruth","walk"]],"Ruth's 59 established a new single-season record."],
-    ["Who hit at least 54 home runs in the 1928 season?",[["Babe Ruth","walk"]],"Ruth hit 54 for the Yankees."],
-    ["Name an AL or NL hitter with at least 56 home runs in 1997.",[["Mark McGwire","walk"],["Ken Griffey Jr.","single"]],"McGwire hit 58 across two clubs and Griffey hit 56 for Seattle."],
-    ["Name an AL or NL player who had at least six hits in a game in 2001.",[["Paul Lo Duca","double"],["Damion Easley","home-run"]],"Lo Duca did it for the Dodgers on May 28 and Easley for Detroit on August 8."],
-    ["Name an AL or NL player who collected at least 222 hits in 1927.",[["Paul Waner","single",["Big Poison"]],["Earle Combs","double"],["Lloyd Waner","home-run",["Little Poison"]]],"Paul Waner had 234 hits, Combs 230, and Lloyd Waner 222."],
-    ["Name an AL or NL player who had at least six hits in a game in 2025.",[["Nick Kurtz","single"],["Austin Wynns","home-run"]],"Wynns did it for Cincinnati on April 20 and Kurtz for the Athletics on July 25."]
+    [1998, "home runs", 56, [["Mark McGwire","walk"], ["Sammy Sosa","single"], ["Ken Griffey Jr.","double"]]],
+    [1999, "home runs", 63, [["Mark McGwire","single"], ["Sammy Sosa","walk"]]],
+    [2000, "doubles", 51, [["Todd Helton","walk"], ["Carlos Delgado","single"], ["Jeff Cirillo","double"], ["Nomar Garciaparra","single"], ["Jose Vidro","home-run"]]],
+    [2001, "hits in one game", 6, [["Damion Easley","home-run"], ["Paul Lo Duca","double"]]],
+    [2002, "doubles", 47, [["Garret Anderson","double"], ["Nomar Garciaparra","single"], ["Alfonso Soriano","double"], ["Magglio Ordonez","home-run"]]],
+    [2003, "triples", 10, [["Cristian Guzman","double"], ["Nomar Garciaparra","single"], ["Steve Finley","double"], ["Rafael Furcal","home-run"], ["Carlos Beltran","single"]]],
+    [2004, "hits in one game", 6, [["Raul Ibanez","double"], ["Alfonso Soriano","double"], ["Carlos Pena","double"], ["Omar Vizquel","home-run"], ["Joe Randa","home-run"], ["Frank Catalanotto","home-run"]]],
+    [2005, "doubles", 45, [["Derrek Lee","double"], ["Todd Helton","walk"], ["Randy Winn","double"], ["Miguel Tejada","home-run"]]],
+    [2006, "doubles", 48, [["Grady Sizemore","single"], ["Michael Young","double"], ["Luis Gonzalez","single"], ["Miguel Cabrera","walk"]]],
+    [2007, "triples", 12, [["Curtis Granderson","single"], ["Jimmy Rollins","single"], ["Jose Reyes","home-run"]]],
+    [2008, "hits in one game", 6, [["Johnny Damon","single"], ["Skip Schumaker","double"]]],
+    [2009, "doubles", 47, [["Billy Butler","double"], ["Brian Roberts","double"], ["Dustin Pedroia","single"]]],
+    [2010, "doubles", 45, [["Adrian Beltre","walk"], ["Ryan Braun","single"], ["Jayson Werth","double"]]],
+    [1947, "home runs", 51, [["Johnny Mize","home-run"], ["Ralph Kiner","double"]]],
+    [2012, "doubles", 45, [["Alex Gordon","double"], ["Albert Pujols","walk"], ["Aramis Ramirez","double"], ["Robinson Cano","single"]]],
+    [2013, "home runs", 36, [["Chris Davis","double"], ["Miguel Cabrera","walk"], ["Pedro Alvarez","double"], ["Paul Goldschmidt","walk"], ["Edwin Encarnacion","single"]]],
+    [2014, "doubles", 43, [["Miguel Cabrera","walk"], ["Jonathan Lucroy","double"], ["Michael Brantley","double"], ["Jose Altuve","walk"]]],
+    [2015, "triples", 11, [["Eddie Rosario","double"], ["Kevin Kiermaier","double"], ["Rajai Davis","double"], ["Evan Gattis","home-run"]]],
+    [2016, "hits in one game", 6, [["Brandon Crawford","single"], ["C.J. Cron","double"], ["Chase Utley","single"], ["Wilmer Flores","home-run"]]],
+    [2017, "triples", 10, [["Charlie Blackmon","single"], ["Billy Hamilton","double"], ["Nick Castellanos","double"]]],
+    [2018, "doubles", 44, [["Alex Bregman","double"], ["Xander Bogaerts","single"], ["Miguel Andujar","double"]]],
+    [2019, "home runs", 45, [["Pete Alonso","walk"], ["Eugenio Suarez","single"], ["Jorge Soler","single"], ["Cody Bellinger","walk"], ["Mike Trout","walk"]]],
+    [2020, "triples", 4, [["Kyle Tucker","single"], ["Trevor Story","double"], ["Trea Turner","single"], ["Mike Yastrzemski","home-run"]]],
+    [2021, "doubles", 40, [["Bryce Harper","walk"], ["Whit Merrifield","single"], ["Jeimer Candelario","double"], ["J. D. Martinez","single"]]],
+    [2022, "triples", 7, [["Amed Rosario","double"], ["Jorge Mateo","double"], ["Steven Kwan","double"], ["Gavin Lux","home-run"], ["Brandon Nimmo","home-run"]]],
+    [2023, "doubles", 40, [["Freddie Freeman","walk"], ["Corey Seager","single"], ["Anthony Santander","single"]]],
+    [1927, "hits", 222, [["Paul Waner","single"], ["Earle Combs","double"], ["Lloyd Waner","home-run"]]],
+    [2025, "hits in one game", 6, [["Nick Kurtz","single"], ["Austin Wynns","home-run"]]]
+  ];
+  const warmupRows = [
+    [1998, "hits", 203, [["Dante Bichette","single"], ["Alex Rodriguez","walk"], ["Craig Biggio","walk"], ["Vinny Castilla","single"], ["Mo Vaughn","single"], ["Derek Jeter","walk"]]],
+    [1999, "hits", 200, [["Derek Jeter","walk"], ["B.J. Surhoff","double"], ["Luis Gonzalez","single"], ["Doug Glanville","home-run"], ["Bernie Williams","home-run"], ["Randy Velarde","home-run"]]],
+    [2000, "home runs", 44, [["Sammy Sosa","walk"], ["Barry Bonds","walk"], ["Troy Glaus","single"], ["Jeff Bagwell","walk"], ["Vladimir Guerrero","walk"], ["Richard Hidalgo","home-run"]]],
+    [2001, "home runs", 49, [["Barry Bonds","walk"], ["Sammy Sosa","walk"], ["Luis Gonzalez","single"], ["Alex Rodriguez","walk"], ["Jim Thome","walk"], ["Shawn Green","single"], ["Todd Helton","walk"]]],
+    [2002, "home runs", 42, [["Alex Rodriguez","walk"], ["Jim Thome","walk"], ["Sammy Sosa","walk"], ["Barry Bonds","walk"], ["Rafael Palmeiro","single"], ["Shawn Green","single"], ["Lance Berkman","home-run"]]],
+    [2003, "home runs", 43, [["Alex Rodriguez","walk"], ["Jim Thome","walk"], ["Barry Bonds","walk"], ["Richie Sexson","home-run"], ["Javy Lopez","home-run"], ["Albert Pujols","walk"]]],
+    [2004, "home runs", 42, [["Adrian Beltre","walk"], ["Albert Pujols","walk"], ["Adam Dunn","single"], ["Barry Bonds","walk"], ["Manny Ramirez","walk"], ["Jim Thome","walk"], ["Jim Edmonds","home-run"]]],
+    [2005, "home runs", 43, [["Andruw Jones","single"], ["Alex Rodriguez","walk"], ["David Ortiz","walk"], ["Derrek Lee","home-run"], ["Manny Ramirez","walk"], ["Mark Teixeira","home-run"]]],
+    [2006, "home runs", 44, [["Ryan Howard","single"], ["David Ortiz","walk"], ["Albert Pujols","walk"], ["Alfonso Soriano","home-run"], ["Lance Berkman","home-run"], ["Jermaine Dye","home-run"]]],
+    [2007, "home runs", 36, [["Alex Rodriguez","walk"], ["Prince Fielder","single"], ["Ryan Howard","single"], ["Carlos Pena","home-run"], ["Adam Dunn","single"], ["Matt Holliday","single"]]],
+    [2008, "home runs", 37, [["Ryan Howard","single"], ["Adam Dunn","single"], ["Carlos Delgado","single"], ["Miguel Cabrera","walk"], ["Manny Ramirez","walk"], ["Albert Pujols","walk"], ["Ryan Braun","single"], ["Ryan Ludwick","home-run"]]],
+    [2009, "home runs", 39, [["Albert Pujols","walk"], ["Prince Fielder","single"], ["Ryan Howard","single"], ["Mark Reynolds","home-run"], ["Adrian Gonzalez","home-run"], ["Carlos Pena","home-run"], ["Mark Teixeira","home-run"]]],
+    [2010, "home runs", 37, [["Jose Bautista","single"], ["Albert Pujols","walk"], ["Paul Konerko","double"], ["Miguel Cabrera","walk"], ["Adam Dunn","single"], ["Joey Votto","single"]]],
+    [2011, "home runs", 37, [["Jose Bautista","single"], ["Curtis Granderson","single"], ["Mark Teixeira","double"], ["Matt Kemp","home-run"], ["Prince Fielder","single"], ["Mark Reynolds","home-run"], ["Albert Pujols","walk"]]],
+    [2012, "home runs", 41, [["Miguel Cabrera","walk"], ["Curtis Granderson","single"], ["Josh Hamilton","single"], ["Edwin Encarnacion","single"], ["Ryan Braun","single"], ["Adam Dunn","single"]]],
+    [2013, "hits", 186, [["Adrian Beltre","walk"], ["Matt Carpenter","double"], ["Miguel Cabrera","walk"], ["Dustin Pedroia","single"], ["Mike Trout","walk"], ["Robinson Cano","single"]]],
+    [2014, "home runs", 35, [["Nelson Cruz","single"], ["Chris Carter","double"], ["Giancarlo Stanton","walk"], ["Mike Trout","walk"], ["Jose Abreu","single"], ["David Ortiz","walk"], ["Jose Bautista","single"]]],
+    [2015, "home runs", 41, [["Chris Davis","double"], ["Nelson Cruz","single"], ["Bryce Harper","walk"], ["Nolan Arenado","walk"], ["Mike Trout","walk"], ["Josh Donaldson","single"]]],
+    [2016, "home runs", 41, [["Mark Trumbo","double"], ["Nelson Cruz","single"], ["Khris Davis","double"], ["Edwin Encarnacion","single"], ["Brian Dozier","home-run"], ["Nolan Arenado","walk"], ["Chris Carter","home-run"]]],
+    [2017, "home runs", 39, [["Giancarlo Stanton","walk"], ["Aaron Judge","walk"], ["J.D. Martinez","single"], ["Khris Davis","home-run"], ["Joey Gallo","home-run"], ["Nelson Cruz","single"], ["Cody Bellinger","walk"]]],
+    [2018, "home runs", 38, [["Khris Davis","double"], ["J.D. Martinez","single"], ["Joey Gallo","double"], ["Jose Ramirez","walk"], ["Mike Trout","walk"], ["Nolan Arenado","walk"], ["Giancarlo Stanton","walk"], ["Francisco Lindor","walk"]]],
+    [2019, "hits", 187, [["Whit Merrifield","single"], ["Rafael Devers","single"], ["DJ LeMahieu","double"], ["Ozzie Albies","home-run"], ["Xander Bogaerts","single"], ["Ketel Marte","home-run"]]],
+    [2020, "home runs", 17, [["Luke Voit","double"], ["Jose Abreu","single"], ["Marcell Ozuna","double"], ["Mike Trout","walk"], ["Fernando Tatis Jr.","walk"], ["Jose Ramirez","walk"]]],
+    [2021, "home runs", 39, [["Vladimir Guerrero Jr.","walk"], ["Salvador Perez","single"], ["Shohei Ohtani","walk"], ["Marcus Semien","single"], ["Fernando Tatis Jr.","walk"], ["Brandon Lowe","home-run"], ["Matt Olson","single"], ["Mitch Haniger","home-run"], ["Aaron Judge","walk"]]],
+    [2022, "home runs", 37, [["Aaron Judge","walk"], ["Kyle Schwarber","walk"], ["Mike Trout","walk"], ["Pete Alonso","walk"], ["Austin Riley","home-run"], ["Yordan Alvarez","home-run"]]],
+    [2023, "home runs", 40, [["Matt Olson","single"], ["Kyle Schwarber","walk"], ["Pete Alonso","walk"], ["Shohei Ohtani","walk"], ["Ronald Acuna Jr.","walk"], ["Marcell Ozuna","home-run"]]],
+    [2024, "home runs", 39, [["Aaron Judge","walk"], ["Shohei Ohtani","walk"], ["Anthony Santander","single"], ["Juan Soto","walk"], ["Jose Ramirez","walk"], ["Brent Rooker","single"], ["Marcell Ozuna","home-run"]]],
+    [2025, "home runs", 45, [["Cal Raleigh","walk"], ["Kyle Schwarber","walk"], ["Shohei Ohtani","walk"], ["Aaron Judge","walk"], ["Eugenio Suarez","single"], ["Junior Caminero","home-run"]]]
   ];
   const tierByName = new Map([
     ["Barry Bonds","walk"],["Babe Ruth","walk"],["Shohei Ohtani","walk"],["Aaron Judge","walk"],
@@ -141,45 +192,78 @@
     ["Jonathan India","double"],["Nick Kurtz","home-run"],["Drake Baldwin","home-run"]
   ]);
   const awardsRef=section=>source("Retrosheet awards and honors",`${retrosheetAwards}#${section}`);
-  const mvpQuestions = mvp.flatMap(([year,nl,al])=>[
-    record(`player-${year}-nl`,"player",`${nl.split(" ")[0]} ___ won the ${year} NL MVP. Name the player.`,[answer(nl,tierByName.get(nl)||"walk")],`${year} National League Most Valuable Player.`,awardsRef("A4"),"player-name"),
-    record(`player-${year}-al`,"player",`${al.split(" ")[0]} ___ won the ${year} AL MVP. Name the player.`,[answer(al,tierByName.get(al)||"walk")],`${year} American League Most Valuable Player.`,awardsRef("A4"),"player-name")
-  ]);
+  const mvpQuestions = mvp.map(([year,nl,al])=>
+    record(`player-${year}-mvp`,"player",`Name a player who won the AL or NL MVP Award in ${year}.`,
+      [answer(nl,tierByName.get(nl)||"walk"),answer(al,tierByName.get(al)||"single")],
+      `${year} AL and NL Most Valuable Players.`,awardsRef("A4"))
+  );
   const negroHallSource={
     ...awardsRef("A1"),
     corroboration:"https://baseballhall.org/hall-of-fame/hall-of-famers-by-election-method"
   };
-  mvpQuestions[0]=record("negro-leagues-hof-1972","player","Josh ___ and Buck ___ made the Hall of Fame in 1972 via the Negro Leagues committee. Name either player.",[answer("Josh Gibson","walk"),answer("Buck Leonard","double")],"Gibson and Leonard were elected by the Committee on Negro Baseball Leagues in 1972.",negroHallSource,"player-name");
-  mvpQuestions[1]=record("negro-leagues-hof-1971","player","Satchel ___ was the Negro Leagues committee’s first Hall of Fame electee in 1971. Name the pitcher.",[answer("Satchel Paige","walk",["Leroy Paige"])],"Satchel Paige was elected in 1971.",negroHallSource,"player-name");
-  const batting = battingRows.map(([question,answers,details],i)=>{
-    const year=question.match(/\b\d{4}\b/)[0];
-    const wording=question.replace("Who hit at least", "Name an AL or NL player who hit at least");
+  mvpQuestions[0]=record("negro-leagues-hof-1971-73","player",
+    "Name a player the Negro Leagues committee elected to the Hall of Fame from 1971 through 1973.",
+    [answer("Satchel Paige"),answer("Josh Gibson"),answer("Buck Leonard","double"),answer("Monte Irvin","home-run")],
+    "Paige was the committee’s first electee in 1971. Gibson and Leonard followed in 1972, then Irvin in 1973.",
+    negroHallSource);
+  mvpQuestions[27]=record("player-2023-25-mvp","player",
+    "Name a player who won the AL or NL MVP Award from 2023 through 2025.",
+    [answer("Shohei Ohtani"),answer("Aaron Judge"),answer("Ronald Acuna Jr.","single")],
+    "Both leagues’ MVP winners from those three seasons qualify.",awardsRef("A4"));
+
+  function battingPrompt(id,category,[year,stat,minimum,answers]) {
     const ref=source(`Retrosheet ${year} regular season event files`,`https://www.retrosheet.org/events/${year}eve.zip`);
-    return record(`batting-${i+1}`,"batting",wording,answers,details,ref,"batting");
-  });
+    const clue=stat==="hits in one game"
+      ? `Name an AL or NL player who had at least ${minimum} hits in a game during the ${year} regular season.`
+      : `Name an AL or NL player with at least ${minimum} ${stat} in the ${year} regular season.`;
+    const prompt=record(id,category,clue,
+      answers,`Qualifying totals are from the ${year} AL and NL regular season.`,ref);
+    return {...prompt,stat};
+  }
+  const warmups=warmupRows.map((row,index)=>battingPrompt(`player-${years[index]}-batting`,"player",row));
+  warmups[13]=record("negro-leagues-hof-1974-77","player",
+    "Name a player the Negro Leagues committee elected to the Hall of Fame from 1974 through 1977.",
+    [answer("Cool Papa Bell"),answer("Judy Johnson","double"),answer("Oscar Charleston","single"),
+      answer("Martín Dihigo","double"),answer("Pop Lloyd","home-run")],
+    "These five players were elected in the committee’s final four years.",
+    negroHallSource);
+  const batting=battingRows.map((row,index)=>battingPrompt(`batting-${index+1}`,"batting",row));
   const pitching = cyYoung.map(([al,nl],i)=>{
     const year=1998+i;
-    return record(`pitching-${year}`,"pitching",`Name a Cy Young Award winner from ${year}.`,[answer(al,tierByName.get(al)||"walk"),answer(nl,tierByName.get(nl)||"single")],`${year} American and National League Cy Young Award winners.`,awardsRef("A5"),"pitching");
+    return record(`pitching-${year}`,"pitching",`Name a Cy Young Award winner from ${year}.`,[answer(al,tierByName.get(al)||"walk"),answer(nl,tierByName.get(nl)||"single")],`${year} American and National League Cy Young Award winners.`,awardsRef("A5"));
   });
   const awards = rookie.map(([nl,al],i)=>{
     const year=1998+i;
-    return record(`awards-${year}`,"awards",`Name a Rookie of the Year Award winner from ${year}.`,[answer(nl,tierByName.get(nl)||"single"),answer(al,tierByName.get(al)||"walk")],`${year} National and American League Rookie of the Year winners.`,awardsRef("A6"),"awards");
+    return record(`awards-${year}`,"awards",`Name a Rookie of the Year Award winner from ${year}.`,[answer(nl,tierByName.get(nl)||"single"),answer(al,tierByName.get(al)||"walk")],`${year} National and American League Rookie of the Year winners.`,awardsRef("A6"));
   });
-  const franchises = champions.map((team,i)=>{
+  const teamAliases={
+    "Anaheim Angels":["Los Angeles Angels","Angels"], "Florida Marlins":["Miami Marlins","Marlins"],
+    "Washington Nationals":["Montreal Expos","Nationals","Expos"], "San Francisco Giants":["New York Giants","Giants"],
+    "Los Angeles Dodgers":["Brooklyn Dodgers","Dodgers"], "Atlanta Braves":["Boston Braves","Milwaukee Braves","Braves"],
+    "Boston Red Sox":["Red Sox"], "Chicago White Sox":["White Sox"], "Chicago Cubs":["Cubs"],
+    "St. Louis Cardinals":["Cardinals"], "Arizona Diamondbacks":["Diamondbacks","D-backs"],
+    "Cleveland Indians":["Cleveland Guardians","Indians","Guardians"], "Tampa Bay Rays":["Rays","Devil Rays"]
+  };
+  const franchises = worldSeriesTeams.map(([winner,runnerUp],i)=>{
     const year=1998+i;
-    const aliases=team==="Anaheim Angels"?["Los Angeles Angels","Angels"]:team==="Florida Marlins"?["Miami Marlins","Marlins"]:team==="Washington Nationals"?["Montreal Expos","Nationals"]:team==="San Francisco Giants"?["New York Giants","Giants"]:team==="Los Angeles Dodgers"?["Brooklyn Dodgers","Dodgers"]:team==="Atlanta Braves"?["Boston Braves","Milwaukee Braves","Braves"]:team==="Chicago White Sox"?["White Sox"]:team==="Chicago Cubs"?["Cubs"]:team==="Boston Red Sox"?["Red Sox"]:team==="New York Yankees"?["Yankees"]:team==="Houston Astros"?["Astros"]:team==="St. Louis Cardinals"?["Cardinals"]:team==="Kansas City Royals"?["Royals"]:team==="Arizona Diamondbacks"?["Diamondbacks","D-backs"]:team==="Philadelphia Phillies"?["Phillies"]:team==="Texas Rangers"?["Rangers"]:team;
     const ref=source(`Retrosheet ${year} postseason results`,`https://www.retrosheet.org/boxesetc/${year}/YPS_${year}.htm`);
-    return record(`franchise-${year}`,"franchises",`Which franchise won the World Series in ${year}?`,[answer(team,tierByName.get(team)||"walk",Array.isArray(aliases)?aliases:[aliases])],`${year} World Series champion.`,ref,"franchise");
+    const answers=[winner,runnerUp].map((team,index)=>
+      answer(team,tierByName.get(team)||(index===0?"walk":"single"),teamAliases[team]||[team.split(" ").at(-1)])
+    );
+    return record(`franchise-${year}`,"franchises",`Name a franchise that played in the ${year} World Series.`,
+      answers,`${winner} beat ${runnerUp} in the ${year} World Series.`,ref);
   });
   const postseason = worldSeriesMvp.map((winners,i)=>{
     const year=1998+i;
-    const names=[winners].flat();
-    const details=names.length===1?`${year} World Series Most Valuable Player.`:"Johnson and Schilling shared the award.";
-    return record(`postseason-${year}`,"postseason",`Name a World Series MVP from ${year}.`,names.map(name=>answer(name,tierByName.get(name)||"single")),details,awardsRef("A10"),"postseason");
+    const previous=i===0?"Livan Hernandez":worldSeriesMvp[i-1];
+    const names=[...new Set([previous,winners].flat())];
+    return record(`postseason-${year}`,"postseason",`Name a World Series MVP from ${year-1} or ${year}.`,
+      names.map(name=>answer(name,tierByName.get(name)||"single")),
+      `World Series MVPs from either ${year-1} or ${year} qualify.`,awardsRef("A10"));
   });
-  const all = [...mvpQuestions,...batting,...pitching,...awards,...franchises,...postseason];
+  const all = [...mvpQuestions,...warmups,...batting,...pitching,...awards,...franchises,...postseason];
   const decks = years.map((year,i)=>[
-    mvpQuestions[i*2],mvpQuestions[i*2+1],batting[i],pitching[i],awards[i],franchises[i],postseason[i]
+    mvpQuestions[i],warmups[i],batting[i],pitching[i],awards[i],franchises[i],postseason[i]
   ]);
   window.HOMERUN_BANK = {all,decks,cycleStart:"2026-11-19"};
 })();
