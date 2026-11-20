@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
     <meta name="theme-color" content="#101b25">
     <meta name="description" content="A daily baseball history trivia game. Seven at-bats. Thirty seconds each. The deeper the cut, the bigger the hit.">
     <title>Home Run — Daily Baseball Trivia</title>
@@ -13,6 +13,7 @@
   </head>
   <body>
     <main class="arcade">
+      <div class="play-view">
       <header class="topbar">
         <a class="brand" href="./" aria-label="Home Run home"><span class="brand-ball" aria-hidden="true">●</span><span>HOME RUN</span><small>BASEBALL TRIVIA</small></a>
         <div class="scoreboard" aria-label="Game scoreboard">
@@ -25,6 +26,7 @@
         <div class="date-chip"><span class="live-dot"></span><span id="date-label">TODAY</span></div>
       </header>
 
+      <div class="stadium-slot">
       <section class="stadium-frame" id="stadium" aria-label="Pixel art baseball stadium">
         <div class="crowd-band crowd-top" aria-hidden="true"></div>
         <div class="scoreboard-ribbon" aria-hidden="true"><span>PLAY BALL</span><b>TAKE YOUR CUT</b><span>SEVEN AT-BATS</span></div>
@@ -96,6 +98,7 @@
         <div class="crowd-band crowd-bottom" aria-hidden="true"></div>
         <div class="stadium-caption"><span>★ THE DIAMOND</span><span>EST. 1903&nbsp; · &nbsp;ALL HISTORY TO 2025</span><span>NO COIN NEEDED</span></div>
       </section>
+      </div>
 
       <section class="game-panel" id="game-panel" aria-labelledby="question-title">
         <div class="intro-card" id="intro-card">
@@ -122,6 +125,7 @@
         <div class="answer-feedback" id="answer-feedback" role="status" aria-live="polite"></div>
         <div class="result-details" id="result-details" aria-live="polite"></div>
       </section>
+      </div>
 
       <section class="postgame hidden" id="postgame" aria-labelledby="final-heading"></section>
 
