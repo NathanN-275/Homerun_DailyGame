@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101b25">
+    <meta name="description" content="A daily baseball history trivia game. Seven at-bats. Thirty seconds each. The deeper the cut, the bigger the hit.">
+    <title>Home Run — Daily Baseball Trivia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="arcade">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Home Run home"><span class="brand-ball" aria-hidden="true">●</span><span>HOME RUN</span><small>BASEBALL TRIVIA</small></a>
+        <div class="scoreboard" aria-label="Game scoreboard">
+          <div class="team-label"><b>H</b><span>HOME</span></div>
+          <div class="score" id="score">000</div>
+          <div class="inning"><span id="game-status">DAILY GAME</span><b id="inning-label">PLAY BALL</b></div>
+          <div class="score" id="at-bat">00</div>
+          <div class="team-label away"><b>A</b><span>AT BAT</span></div>
+        </div>
+        <div class="date-chip"><span class="live-dot"></span><span id="date-label">TODAY</span></div>
+      </header>
+
+      <section class="stadium-frame" id="stadium" aria-label="Pixel art baseball stadium">
+        <div class="crowd-band crowd-top" aria-hidden="true"></div>
+        <div class="scoreboard-ribbon" aria-hidden="true"><span>PLAY BALL</span><b>TAKE YOUR CUT</b><span>SEVEN AT-BATS</span></div>
+        <div class="field-wrap" id="field-wrap">
+          <svg class="field" viewBox="0 0 1000 560" role="img" aria-labelledby="field-title field-desc" preserveAspectRatio="xMidYMid meet">
+            <title id="field-title">A pixel art ballpark, viewed from behind home plate</title>
+            <desc id="field-desc">The full diamond, pitcher, batter, fielders and umpire are visible. The view is elevated and angled toward third base.</desc>
+            <defs>
+              <pattern id="grass" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#317d5d"/><rect width="14" height="28" fill="#398765"/><path d="M0 0h28M0 14h28" stroke="#2b7154" stroke-width="2" opacity=".5"/></pattern>
+              <pattern id="stands" width="38" height="24" patternUnits="userSpaceOnUse">
+                <rect width="38" height="24" fill="#233647"/>
+                <g class="fans">
+                  <rect x="5" y="5" width="6" height="6" fill="#dfbb6b"/>
+                  <rect x="15" y="5" width="6" height="6" fill="#d76a57"/>
+                  <rect x="25" y="5" width="6" height="6" fill="#86b7d5"/>
+                  <rect x="9" y="15" width="6" height="5" fill="#a378bd"/>
+                  <rect x="23" y="15" width="6" height="5" fill="#d8d2bd"/>
+                </g>
+              </pattern>
+              <filter id="pixel-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="5" stdDeviation="0" flood-color="#0a1017" flood-opacity=".7"/></filter>
+            </defs>
+            <rect width="1000" height="560" fill="#162637"/>
+            <path d="M0 0h1000v113H0z" fill="url(#stands)"/>
+            <path d="M0 99h1000v22H0z" fill="#101b25" stroke="#627382" stroke-width="5"/>
+            <path d="M0 120h1000v440H0z" fill="url(#grass)"/>
+            <g transform="matrix(1 0 .22 1 -110 0)">
+            <path d="M88 474Q95 180 500 140Q905 180 912 474L500 525Z" fill="#438d68" stroke="#edcf91" stroke-width="8"/>
+            <path d="M220 402L500 224L780 402L500 520Z" fill="#ab8255" stroke="#e7c58b" stroke-width="7"/>
+            <path d="M254 398L500 247L746 398L500 503Z" fill="#438d68" stroke="#f0ddae" stroke-width="4"/>
+            <path d="M254 398L500 247L746 398L500 503Z" fill="none" stroke="#f3e9cf" stroke-width="3"/>
+            <path d="M500 486l20 14-20 14-20-14z" fill="#fff2d3"/>
+            <rect x="240" y="389" width="22" height="22" fill="#fff2d3" transform="rotate(45 251 400)"/>
+            <rect x="489" y="236" width="22" height="22" fill="#fff2d3" transform="rotate(45 500 247)"/>
+            <rect x="738" y="389" width="22" height="22" fill="#fff2d3" transform="rotate(45 749 400)"/>
+            <ellipse cx="500" cy="373" rx="57" ry="23" fill="#c39b6a" stroke="#f0d09a" stroke-width="4"/>
+            <circle cx="500" cy="371" r="8" fill="#fff2d3"/>
+            <path d="M96 474Q122 252 250 205M904 474Q878 252 750 205" fill="none" stroke="#fff1d4" stroke-width="3" stroke-dasharray="12 7"/>
+            <path d="M90 474L500 525L910 474" fill="none" stroke="#fff1d4" stroke-width="5"/>
+            <path d="M151 407Q194 397 237 411L230 464Q191 478 151 463Z" fill="#d3b38a" stroke="#704d34" stroke-width="5"/>
+            <path d="M84 423h70v50H84z" fill="#c52d34" stroke="#f1d7a1" stroke-width="5"/>
+            <path d="M862 423h70v50h-70z" fill="#c52d34" stroke="#f1d7a1" stroke-width="5"/>
+            <g id="base-state" class="base-state">
+              <circle cx="500" cy="247" r="15" data-base="second"/>
+              <circle cx="749" cy="400" r="15" data-base="first"/>
+            </g>
+            <g class="sprite fielder fielder-lf" transform="translate(207 291)"><use href="#blue-player"/></g>
+            <g class="sprite fielder fielder-cf" transform="translate(500 208)"><use href="#blue-player"/></g>
+            <g class="sprite fielder fielder-rf" transform="translate(793 291)"><use href="#blue-player"/></g>
+            <g class="sprite fielder fielder-ss" transform="translate(382 306)"><use href="#blue-player"/></g>
+            <g class="sprite fielder fielder-2b" transform="translate(618 306)"><use href="#blue-player"/></g>
+            <g class="sprite pitcher" transform="translate(500 347)"><use href="#blue-player"/></g>
+            <g class="sprite batter" transform="translate(547 458)"><use href="#red-player"/><path d="M-4 6l-28-39 6-5 30 37" stroke="#e0bb72" stroke-width="6"/></g>
+            <g class="sprite umpire" transform="translate(462 477)"><use href="#umpire-player"/></g>
+            <g id="runner" class="sprite runner" transform="translate(547 458)"><use href="#red-player"/></g>
+            <g id="baseball" class="baseball"><circle r="9"/><path d="M-4-5q8 5 8 10M4-5q-8 5-8 10" fill="none" stroke="#c73b42" stroke-width="1.8"/></g>
+            </g>
+            <g class="field-overlay" aria-hidden="true"><rect x="30" y="23" width="200" height="36" fill="#0d1822" stroke="#a9c0c4" stroke-width="2"/><text x="130" y="47" text-anchor="middle">RETRO PARK · EST. 1903</text></g>
+            <g id="sprite-defs" style="display:none">
+              <g id="blue-player"><rect x="-8" y="-26" width="16" height="10" fill="#d6a26f"/><rect x="-11" y="-37" width="22" height="8" fill="#2254a6"/><rect x="-10" y="-16" width="20" height="21" fill="#2765bb"/><rect x="-9" y="4" width="7" height="16" fill="#24354c"/><rect x="3" y="4" width="7" height="16" fill="#24354c"/><rect x="-11" y="19" width="9" height="5" fill="#d9d6ce"/><rect x="3" y="19" width="9" height="5" fill="#d9d6ce"/><rect x="-16" y="-11" width="6" height="14" fill="#d6a26f"/><rect x="10" y="-11" width="6" height="14" fill="#d6a26f"/></g>
+              <g id="red-player"><rect x="-8" y="-26" width="16" height="10" fill="#d6a26f"/><rect x="-11" y="-37" width="22" height="8" fill="#bf3c37"/><rect x="-10" y="-16" width="20" height="21" fill="#c94c42"/><rect x="-9" y="4" width="7" height="16" fill="#293449"/><rect x="3" y="4" width="7" height="16" fill="#293449"/><rect x="-11" y="19" width="9" height="5" fill="#e2dfd5"/><rect x="3" y="19" width="9" height="5" fill="#e2dfd5"/></g>
+              <g id="umpire-player"><rect x="-8" y="-26" width="16" height="10" fill="#d6a26f"/><rect x="-10" y="-16" width="20" height="21" fill="#252b32"/><path d="M-7-14v18m7-18v18m7-18v18" stroke="#eee" stroke-width="3"/><rect x="-9" y="5" width="7" height="15" fill="#252b32"/><rect x="3" y="5" width="7" height="15" fill="#252b32"/></g>
+            </g>
+          </svg>
+          <div class="scorebug" aria-hidden="true"><span>PITCH CLOCK</span><b id="scorebug-count">00:30</b></div>
+          <div class="result-banner" id="result-banner" aria-live="polite" aria-atomic="true"></div>
+        </div>
+        <div class="crowd-band crowd-bottom" aria-hidden="true"></div>
+        <div class="stadium-caption"><span>★ THE DIAMOND</span><span>EST. 1903&nbsp; · &nbsp;ALL HISTORY TO 2025</span><span>NO COIN NEEDED</span></div>
+      </section>
+
+      <section class="game-panel" id="game-panel" aria-labelledby="question-title">
+        <div class="intro-card" id="intro-card">
+          <span class="eyebrow">✦ DAILY BASEBALL TRIVIA</span>
+          <h1>STEP UP TO<br>THE PLATE</h1>
+          <p>Baseball history. Seven at-bats. How deep is your knowledge?</p>
+          <div class="intro-stats"><b>07 <small>QUESTIONS</small></b><b>30 <small>SEC / AT-BAT</small></b></div>
+          <button id="start-button" type="button">PLAY BALL <span>↗</span></button>
+          <small class="one-game-note">One completed game per day · New game at midnight Eastern</small>
+        </div>
+        <div class="panel-heading"><span id="question-counter">AT-BAT 01 / 07</span><span id="category-tag">PLAYER HISTORY</span><span class="panel-day" id="panel-day">DAY 01 / 28</span></div>
+        <div class="question-area">
+          <div class="question-copy">
+            <h1 id="question-title">NAME YOUR ANSWER</h1>
+            <p id="question-hint">Every clue has a complete answer list. Deep cuts hit harder.</p>
+          </div>
+          <div class="timer-wrap" aria-label="Time remaining"><span id="timer-value">30</span><small>SEC</small><div class="timer-track"><i id="timer-bar"></i></div></div>
+        </div>
+        <form id="answer-form" autocomplete="off">
+          <label class="sr-only" for="answer-input">Your baseball answer</label>
+          <input id="answer-input" name="answer" type="text" placeholder="Type a player, team, or answer…" enterkeyhint="go" required spellcheck="false" aria-describedby="answer-feedback">
+          <button id="swing-button" type="submit"><span>SWING</span><b aria-hidden="true">↗</b></button>
+        </form>
+        <div class="answer-feedback" id="answer-feedback" role="status" aria-live="polite"></div>
+        <div class="result-details" id="result-details" aria-live="polite"></div>
+      </section>
+
+      <section class="postgame hidden" id="postgame" aria-live="polite"></section>
+
+      <footer class="sources-credit">
+        <span>The information used here was obtained free of charge from and is copyrighted by Retrosheet. Interested parties may contact Retrosheet at <a href="https://www.retrosheet.org/">www.retrosheet.org</a>.</span>
+        <a href="https://www.retrosheet.org/notice.txt">Data notice</a>
+      </footer>
+    </main>
+    <script src="questions.js"></script>
+    <script src="core.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

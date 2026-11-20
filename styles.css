@@ -1,0 +1,195 @@
+:root{color-scheme:dark;--ink:#101b25;--night:#142231;--panel:#172738;--line:#536474;--cream:#f4ebd3;--muted:#a7b0b8;--gold:#f2c665;--green:#5bdb9f;--red:#e77763;--blue:#82b8ed;font-family:"DM Mono",ui-monospace,monospace;background:var(--ink);color:var(--cream);font-synthesis:none;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}body{margin:0;min-width:320px;background:radial-gradient(ellipse at 50% -15%,#30445a 0,#172738 35%,#101b25 70%);min-height:100vh}
+.arcade{width:min(1500px,100%);margin:0 auto;padding:14px clamp(12px,2vw,30px) 18px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:58px;margin-bottom:12px}
+.brand{color:var(--cream);text-decoration:none;display:flex;align-items:center;gap:10px;font:10px "Press Start 2P",monospace;white-space:nowrap}
+.brand small{color:#91a0aa;font:8px "DM Mono",monospace;letter-spacing:.12em;margin-left:4px}
+.brand-ball{width:25px;height:25px;border-radius:50%;background:var(--gold);color:#994536;display:grid;place-items:center;font-size:8px;box-shadow:inset -4px -3px 0 #d69e4d}
+.scoreboard{display:flex;align-items:stretch;height:48px;min-width:min(525px,50vw);background:#23384c;border:2px solid #687988;box-shadow:0 4px 0 #09131d}
+.team-label{display:flex;align-items:center;gap:7px;padding:0 12px;color:#a6cfff;font-weight:700;font-size:11px}
+.team-label b{border:2px solid currentColor;border-radius:3px;padding:3px 5px;font-size:11px}
+.team-label.away{color:#ffaaa0}
+.score{font:20px "Press Start 2P",monospace;display:grid;place-items:center;padding:0 14px;color:#fff}
+.inning{background:#132130;display:flex;min-width:100px;flex-direction:column;justify-content:center;align-items:center;border-left:1px solid #4c5c6c;border-right:1px solid #4c5c6c;font-size:8px;color:#cad3da;gap:4px}
+.inning b{color:var(--gold);font:8px "Press Start 2P",monospace}
+.date-chip{font-size:10px;display:flex;align-items:center;gap:8px;color:#c0c9cd;letter-spacing:.07em;white-space:nowrap}
+.live-dot{background:var(--green);width:7px;height:7px;border-radius:50%;box-shadow:0 0 8px #5bdb9f}
+.stadium-frame{position:relative;overflow:hidden;background:#22374a;border:2px solid #526576;box-shadow:0 8px 0 #09131d,0 18px 36px #070d12a8}
+.crowd-band{height:40px;background-color:#1a2938;background-image:repeating-linear-gradient(90deg,transparent 0 4px,#34495b 4px 7px,transparent 7px 10px),repeating-linear-gradient(0deg,transparent 0 4px,#172330 4px 6px);position:relative;overflow:hidden}
+.crowd-band:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 12px,#d0a461 12px 15px,transparent 15px 27px,#c45e51 27px 30px,transparent 30px 41px,#72a7cc 41px 44px,transparent 44px 54px);opacity:.45;animation:crowd-shift 2.8s steps(6,end) infinite alternate}
+.crowd-bottom{height:30px}
+.scoreboard-ribbon{height:32px;display:flex;align-items:center;justify-content:space-around;background:#101c28;border-block:2px solid #536474;color:#a9b5bd;font-size:9px;letter-spacing:.11em}
+.scoreboard-ribbon b{font:9px "Press Start 2P",monospace;color:var(--gold);letter-spacing:0}
+.field-wrap{position:relative;background:#317d5d;padding:0 clamp(4px,1vw,14px)}
+.field{width:100%;height:auto;display:block;max-height:clamp(290px,47vw,620px);image-rendering:pixelated}
+.field text{font:8px "Press Start 2P",monospace;fill:#e8d49d}
+.base-state{fill:#f4ebd3}
+.base-state circle{opacity:0}
+.base-state circle.active{opacity:.9;animation:base-flash .45s steps(2,end) 3}
+.sprite{filter:url(#pixel-shadow)}
+.sprite use{overflow:visible}
+.runner{opacity:0}
+.baseball{opacity:0;fill:#fff7e9;filter:url(#pixel-shadow)}
+.scorebug{position:absolute;top:15px;right:20px;display:flex;align-items:center;gap:10px;padding:7px 10px;background:#111c28dc;border:1px solid #81909a;font-size:9px;color:#d2d9db}
+.scorebug b{font:10px "Press Start 2P",monospace;color:var(--gold)}
+.result-banner{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%) scale(.75);padding:13px 22px;background:#101c28eF;border:2px solid var(--gold);box-shadow:5px 5px 0 #09131d;color:var(--gold);font:clamp(12px,2vw,21px) "Press Start 2P",monospace;white-space:nowrap;text-align:center;opacity:0;pointer-events:none;z-index:2}
+.result-banner.show{opacity:1;transform:translate(-50%,-50%) scale(1);transition:transform .25s steps(4,end),opacity .2s ease}:is(.result-banner[data-kind="strike"],.result-banner[data-kind="foul"]){border-color:#e77763;color:#ffa08e}
+.result-banner[data-kind="single"],.result-banner[data-kind="double"]{color:#a4dcff}
+.result-banner[data-kind="home-run"]{color:#91f4ba;border-color:#91f4ba}
+.stadium-caption{height:27px;background:#28664f;display:flex;align-items:center;justify-content:space-between;padding:0 13px;color:#c5d5c8;font-size:9px;letter-spacing:.06em}
+.game-panel{margin:18px auto 0;max-width:980px;background:linear-gradient(135deg,#1a2b3b,#142332);border:2px solid #526475;box-shadow:0 6px 0 #09131d;padding:0 23px 20px}
+.panel-heading{height:39px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #45586a;color:#a9b4bd;font-size:9px;letter-spacing:.1em}
+.panel-heading span:nth-child(2){color:var(--gold)}
+.panel-day{color:#7891a0!important}
+.question-area{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:19px 0 15px}
+.question-copy h1{font:clamp(14px,2.3vw,20px) "Press Start 2P",monospace;line-height:1.7;margin:0 0 6px;color:#fff3d8}
+.question-copy p{margin:0;color:#aab8c1;font-size:12px;line-height:1.5}
+.timer-wrap{display:grid;grid-template-columns:auto auto;align-items:center;column-gap:7px;min-width:85px;text-align:right;color:var(--gold)}
+.timer-wrap span{font:18px "Press Start 2P",monospace}
+.timer-wrap small{font-size:9px}
+.timer-track{grid-column:1/3;height:5px;background:#2c4052;margin-top:7px;overflow:hidden}
+.timer-track i{height:100%;display:block;background:var(--green);width:100%;transform-origin:left;transition:width .25s linear}
+.timer-track i.low{background:var(--red)}
+#answer-form{display:flex;gap:9px}
+#answer-input{width:100%;min-width:0;background:#0e1a26;border:2px solid #607487;color:#fff5df;padding:14px;font:14px "DM Mono",monospace;border-radius:0;outline:none}
+#answer-input::placeholder{color:#74838d}
+#answer-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px #f2c66529}
+#answer-form button{display:flex;align-items:center;gap:17px;justify-content:center;min-width:152px;padding:0 18px;background:var(--gold);color:#332b1e;border:0;border-bottom:4px solid #b58239;font:10px "Press Start 2P",monospace;cursor:pointer}
+#answer-form button:hover{background:#ffdc7e}
+#answer-form button:active{transform:translateY(2px);border-bottom-width:2px}
+.answer-feedback{height:22px;padding-top:7px;font-size:11px;color:var(--red)}
+.answer-feedback.success{color:var(--green)}
+.answer-feedback.warning{color:#ffd47d}
+.result-details{min-height:0;color:#cfdbdf;font-size:12px;line-height:1.7}
+.result-details.visible{margin-top:9px;padding:12px;background:#10202b;border-left:3px solid var(--gold)}
+.result-details strong{color:var(--gold)}
+.postgame{max-width:980px;margin:18px auto;background:#172738;border:2px solid #526475;box-shadow:0 6px 0 #09131d;padding:22px}
+.postgame h2{font:18px "Press Start 2P",monospace;line-height:1.7;color:var(--gold);margin:0 0 12px}
+.postgame .final-score{font:34px "Press Start 2P",monospace;color:#fff}
+.postgame p{font-size:12px;color:#b8c5cd;line-height:1.7}
+.best-line{color:var(--green)!important}
+.hit-log{display:grid;gap:6px;margin:18px 0}
+.hit-row{display:grid;grid-template-columns:75px 1fr auto;gap:12px;border-top:1px solid #435668;padding:8px 0;font-size:11px}
+.hit-row a{color:#9ecbfd;text-decoration:underline;text-underline-offset:2px}
+.hit-row em{color:var(--gold);font-style:normal}
+.sources-credit{border-top:1px solid #435668;padding-top:14px!important;font-size:10px!important}
+.sources-credit a{color:#9ecbfd}footer{display:flex;justify-content:space-between;gap:12px;color:#7c8a95;font-size:9px;letter-spacing:.08em;padding:17px 3px 0}
+.hidden{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[data-outcome="walk"] .runner{opacity:1;animation:walk-first 1.1s steps(9,end) forwards}
+[data-outcome="single"] .baseball{opacity:1;animation:single-flight 1.15s ease-out forwards}
+[data-outcome="double"] .baseball{opacity:1;animation:double-flight 1.15s ease-out forwards}
+[data-outcome="home-run"] .baseball{opacity:1;animation:home-flight 1.35s ease-out forwards}
+@keyframes walk-first{to{transform:translate(749px,400px)}}
+@keyframes single-flight{0%{transform:translate(540px,460px)}60%{transform:translate(750px,290px)}100%{transform:translate(700px,355px)}}
+@keyframes double-flight{0%{transform:translate(540px,460px)}65%{transform:translate(800px,200px)}100%{transform:translate(500px,245px)}}
+@keyframes home-flight{0%{transform:translate(540px,460px)}75%{transform:translate(250px,95px) scale(.7)}100%{transform:translate(245px,35px) scale(.4)}}
+@keyframes base-flash{50%{opacity:.2}}
+@keyframes crowd-shift{to{background-position:8px 0}}
+@media(max-width:760px){.arcade{padding:8px 8px 14px}
+.topbar{gap:8px;min-height:51px}
+.brand{font-size:7px;gap:6px}
+.brand small{display:none}
+.brand-ball{width:21px;height:21px}
+.scoreboard{min-width:0;height:42px;flex:1}
+.team-label{padding:0 5px;gap:4px;font-size:8px}
+.team-label b{font-size:8px;padding:2px 3px}
+.score{font-size:13px;padding:0 6px}
+.inning{min-width:67px;font-size:7px}
+.inning b{font-size:6px}
+.date-chip{font-size:8px;gap:4px}
+.crowd-band{height:28px}
+.crowd-bottom{height:20px}
+.scoreboard-ribbon{height:27px;font-size:7px}
+.scoreboard-ribbon b{font-size:7px}
+.field{max-height:none;min-height:255px}
+.field-wrap{padding:0}
+.scorebug{top:7px;right:7px;gap:5px;font-size:7px;padding:5px}
+.scorebug b{font-size:7px}
+.stadium-caption{font-size:7px;padding:0 7px;height:24px}
+.game-panel{margin-top:14px;padding:0 12px 14px}
+.panel-heading{font-size:7px;height:34px}
+.question-area{padding:14px 0 11px;gap:8px}
+.question-copy h1{font-size:12px;line-height:1.6}
+.question-copy p{font-size:10px}
+.timer-wrap{min-width:56px}
+.timer-wrap span{font-size:13px}
+.timer-track{height:4px}
+#answer-form{gap:6px}
+#answer-input{padding:12px 9px;font-size:12px}
+#answer-form button{min-width:87px;gap:6px;padding:0 8px;font-size:8px}
+.answer-feedback{font-size:10px}
+.postgame{margin-top:14px;padding:15px}
+.postgame h2{font-size:14px}
+.postgame .final-score{font-size:27px}
+.hit-row{grid-template-columns:60px 1fr auto;gap:6px;font-size:10px}footer{font-size:7px;line-height:1.5}}
+@media(max-width:380px){.date-chip #date-label{display:none}
+.team-label span{display:none}
+.scoreboard-ribbon span:last-child{display:none}
+.stadium-caption span:nth-child(2){display:none}
+.question-copy h1{font-size:10px}
+#answer-form button{min-width:75px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+.result-banner.show{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.intro-card{text-align:center;padding:25px 18px 22px;max-width:620px;margin:0 auto}
+.intro-card .eyebrow{font-size:9px;color:var(--gold);letter-spacing:.1em}
+.intro-card h1{font:clamp(17px,3vw,26px)/1.8 "Press Start 2P",monospace;margin:12px 0;color:#fff3d8}
+.intro-card p{color:#b6c3cc;font-size:12px;margin:0 auto 19px}
+.intro-stats{display:flex;justify-content:center;gap:25px;color:var(--green);font-size:14px}
+.intro-stats b{display:grid;gap:5px}
+.intro-stats small{font-size:8px;color:#b6c3cc}
+.intro-card button{width:min(400px,100%);height:50px;margin:18px auto 9px;display:flex;align-items:center;justify-content:center;gap:25px;background:var(--gold);border:0;border-bottom:4px solid #b58239;color:#332b1e;font:10px "Press Start 2P",monospace;cursor:pointer}
+.intro-card button:hover{background:#ffdc7e}
+.one-game-note{display:block;color:#92a1ab;font-size:9px}
+.game-panel.ready .panel-heading,.game-panel.ready .question-area,.game-panel.ready #answer-form,.game-panel.ready .answer-feedback,.game-panel.ready .result-details{display:none}
+@media(min-width:761px){.field{max-height:clamp(290px,calc(100svh - 335px),530px)}}
+
+[data-outcome="walk"] .batter { opacity: 0; }
+[data-outcome="single"] .crowd-band:after { animation-duration: .85s; opacity: .65; }
+[data-outcome="double"] .crowd-band:after { animation-duration: .55s; opacity: .75; }
+[data-outcome="walk"] .crowd-band:after { animation-duration: 1.2s; }
+[data-outcome="home-run"] .crowd-band:after { animation-duration: .25s; opacity: .9; }
+:is([data-outcome="strike"], [data-outcome="foul"]) .crowd-band:after { animation-duration: 3.5s; opacity: .25; }
+[data-outcome="strike"] .baseball { animation: strike-pitch 1s ease-in both; }
+[data-outcome="foul"] .baseball { animation: foul-ball 1.15s ease-out both; }
+[data-outcome="strike"] .umpire use { animation: umpire-call .9s steps(2,end) both; }
+@keyframes strike-pitch {
+  0% { opacity: 1; transform: translate(500px,345px); }
+  90% { opacity: 1; transform: translate(482px,476px); }
+  100% { opacity: 0; transform: translate(482px,476px); }
+}
+@keyframes foul-ball {
+  0% { opacity: 1; transform: translate(540px,460px); }
+  100% { opacity: 1; transform: translate(970px,530px) scale(.6); }
+}
+@keyframes umpire-call { 50%, 100% { transform: translateY(-7px); } }
+.sources-credit { color: var(--muted); line-height: 1.6; }
+.sources-credit > a { white-space: nowrap; }
+.fans { animation: cheer 2.8s steps(2,end) infinite alternate; }
+[data-outcome="walk"] .fans { animation-duration: 1.2s; }
+[data-outcome="single"] .fans { animation-duration: .85s; }
+[data-outcome="double"] .fans { animation-duration: .55s; }
+[data-outcome="home-run"] .fans { animation-duration: .25s; }
+:is([data-outcome="strike"],[data-outcome="foul"]) .fans { animation: none; opacity: .7; }
+@keyframes cheer { to { transform: translateY(-3px); } }
+
+.arcade { max-width: 1140px; }
+.crowd-top { display: none; }
+.crowd-bottom { height: 12px; }
+.scoreboard-ribbon { height: 24px; }
+.stadium-caption { height: 23px; }
+.field-wrap { background: #317d5d; }
+.sources-credit { margin-top: 12px; }
+@media (min-width: 761px) {
+  .field { max-height: clamp(240px,calc(100svh - 410px),480px); }
+  .question-copy h1 { font-size: clamp(14px,2vw,18px); }
+  .question-area { padding: 15px 0 12px; }
+}
+@media (max-width: 480px) {
+  .topbar { flex-wrap: wrap; justify-content: space-between; }
+  .scoreboard { order: 2; flex-basis: 100%; justify-content: space-between; }
+  .date-chip #date-label { display: inline; }
+  .team-label span { display: inline; }
+  .question-copy h1 { font-size: 12px; }
+  .answer-feedback { height: auto; min-height: 22px; }
+}
