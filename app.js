@@ -40,6 +40,9 @@
     elements.intro.classList.toggle("hidden",game.phase!=="ready");
     elements.postgame.classList.toggle("hidden",game.phase!=="complete");
     elements.stadium.dataset.outcome=game.pending?.outcome.id||"";
+    const landing=game.pending?.landing;
+    elements.stadium.style.setProperty("--foul-x",landing?`${landing.x}px`:"");
+    elements.stadium.style.setProperty("--foul-y",landing?`${landing.y}px`:"");
     elements.banner.classList.toggle("show",game.phase==="result");
     const occupied=game.pending?.outcome.id;
     for (const base of elements.bases.children) {
@@ -114,7 +117,15 @@
   function timeOut(random=Math.random) {
     if(game.phase!=="playing") return;
     const label=chooseTimeout(random);
-    finishAtBat({type:"timeout",label,outcome:{id:label.toLowerCase(),label},points:0});
+    const landing=label==="FOUL"?foulLanding(random):undefined;
+    finishAtBat({type:"timeout",label,outcome:{id:label.toLowerCase(),label},points:0,landing});
+  }
+  function foulLanding(random) {
+    const x=32+936*random();
+    // SVG foul lines run from home (500, 496) to the poles at (98, 299) and (902, 299).
+    const foulLineY=496-Math.abs(x-500)*197/402;
+    const minY=foulLineY+12;
+    return {x,y:minY+(544-minY)*random()};
   }
   function finishAtBat(pending) {
     game.phase="result";

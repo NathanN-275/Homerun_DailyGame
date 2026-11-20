@@ -166,7 +166,7 @@ footer span{flex:1 1 18rem}
 }
 @keyframes foul-ball {
   0% { opacity: 1; transform: translate(514px,447px); }
-  100% { opacity: 1; transform: translate(940px,460px) scale(.6); }
+  100% { opacity: 1; transform: translate(var(--foul-x,940px),var(--foul-y,460px)) scale(.6); }
 }
 @keyframes umpire-call { 50%, 100% { transform: translateY(-7px); } }
 .sources-credit { color: var(--muted); line-height: 1.6; }

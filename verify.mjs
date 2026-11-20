@@ -59,7 +59,7 @@ assert.equal(core.resolveGuess("Sammy Sosa",batting1999.answers).answer.name,"Sa
 
 // Run the actual game controller against the markup IDs with a deterministic clock and storage.
 let now=Date.parse("2026-11-20T04:50:00Z");
-let random=0;
+let sampleRandom=()=>0;
 const storage=new Map();
 class TestDate extends Date {
   constructor(value=now) { super(value); }
@@ -69,7 +69,7 @@ function loadGame() {
   function node() {
     const classes=new Set();
     return {
-      textContent:"", value:"", dataset:{}, style:{}, events:{},
+      textContent:"", value:"", dataset:{}, style:{setProperty(name,value){this[name]=value;}}, events:{},
       classList:{contains:name=>classes.has(name),add:name=>classes.add(name),
         toggle(name,on) { if(on) classes.add(name); else classes.delete(name); }},
       addEventListener(event,handler) { this.events[event]=handler; },
@@ -80,7 +80,7 @@ function loadGame() {
   nodes["base-state"].children=["second","first"].map(base=>Object.assign(node(),{dataset:{base}}));
   let tick;
   const window={HOMERUN_BANK:bankContext.window.HOMERUN_BANK,setInterval(handler){ tick=handler; },addEventListener(){}};
-  const context=vm.createContext({window,Date:TestDate,Math:Object.assign(Object.create(Math),{random:()=>random}),
+  const context=vm.createContext({window,Date:TestDate,Math:Object.assign(Object.create(Math),{random:()=>sampleRandom()}),
     localStorage:{getItem:key=>storage.get(key),setItem:(key,value)=>storage.set(key,value)},
     document:{getElementById:id=>nodes[id]}});
   vm.runInContext(coreCode,context);
@@ -116,14 +116,19 @@ expectOutcome("Derek Jeter","walk",110,"first");
 expectOutcome("Big Mac","walk",120,"first");
 expectOutcome("Tom Glavine","single",170,"first");
 for(const [value,outcome] of [[0,"strike"],[.99,"foul"]]) {
-  random=value;
+  sampleRandom=()=>value;
   now+=30_000;
   browser.tick();
   assert.equal(browser.nodes.stadium.dataset.outcome,outcome);
   assert.ok(browser.nodes["result-banner"].classList.contains("show"));
   assert.equal(Number(browser.nodes.score.textContent),170);
+  const rightLanding=browser.nodes.stadium.style["--foul-x"];
   browser=loadGame();
   assert.equal(browser.nodes.stadium.dataset.outcome,outcome);
+  if(outcome==="foul") {
+    assert.ok(parseFloat(rightLanding)>500);
+    assert.equal(browser.nodes.stadium.style["--foul-x"],rightLanding);
+  }
   now+=1_400;
   browser.tick();
   assert.equal(browser.nodes["timer-value"].textContent,"30");
@@ -145,4 +150,18 @@ assert.equal(browser.nodes["panel-day"].textContent,"DAY 02 / 28");
 assert.equal(browser.nodes.score.textContent,"000");
 assert.equal(browser.nodes["timer-value"].textContent,"30");
 assert.equal(JSON.parse([...storage.values()][0]).best,370);
+browser.nodes["start-button"].events.click();
+for(const horizontalRoll of [.05,.5,.95]) {
+  const rolls=[.9,horizontalRoll,.3];
+  sampleRandom=()=>rolls.shift();
+  now+=30_000;
+  browser.tick();
+  assert.equal(browser.nodes.stadium.dataset.outcome,"foul");
+  const x=parseFloat(browser.nodes.stadium.style["--foul-x"]);
+  const y=parseFloat(browser.nodes.stadium.style["--foul-y"]);
+  assert.equal(x,32+936*horizontalRoll);
+  assert.ok(y>496-Math.abs(x-500)*197/402 && y<=544);
+  now+=1_400;
+  browser.tick();
+}
 console.log("Verified 196 prompts, 28 decks, answer matching, all scoring and timeout states, reload and resume, the completion lock, and midnight Eastern rollover.");
