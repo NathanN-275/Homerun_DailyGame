@@ -111,17 +111,19 @@ function expectOutcome(guess,outcome,score,base) {
   browser.tick();
   assert.equal(browser.nodes.stadium.dataset.outcome,"");
 }
-expectOutcome("Buck Leonar","double",100,"second");
-expectOutcome("Derek Jeter","walk",110,"first");
-expectOutcome("Big Mac","walk",120,"first");
-expectOutcome("Tom Glavine","single",170,"first");
+expectOutcome("Yordan Alvare","walk",10,"first");
+expectOutcome("Kyle Schwarber","single",60,"first");
+expectOutcome("Ben Rice","home-run",260);
+expectOutcome("Jacob Misiorowski","single",310,"first");
+expectOutcome("Kevin McGonigle","walk",320,"first");
+expectOutcome("Tampa Bay Rays","single",370,"first");
 for(const [value,outcome] of [[0,"strike"],[.99,"foul"]]) {
   sampleRandom=()=>value;
   now+=30_000;
   browser.tick();
   assert.equal(browser.nodes.stadium.dataset.outcome,outcome);
   assert.ok(browser.nodes["result-banner"].classList.contains("show"));
-  assert.equal(Number(browser.nodes.score.textContent),170);
+    assert.equal(Number(browser.nodes.score.textContent),370);
   const rightLanding=browser.nodes.stadium.style["--foul-x"];
   browser=loadGame();
   assert.equal(browser.nodes.stadium.dataset.outcome,outcome);
@@ -133,23 +135,23 @@ for(const [value,outcome] of [[0,"strike"],[.99,"foul"]]) {
   browser.tick();
   assert.equal(browser.nodes["timer-value"].textContent,"30");
 }
-expectOutcome("Scott Brosius","home-run",370);
+expectOutcome("William Contreras","single",420,"first");
 browser=loadGame();
-assert.match(browser.nodes.postgame.innerHTML,/PERSONAL BEST · 370/);
+assert.match(browser.nodes.postgame.innerHTML,/PERSONAL BEST · 420/);
 assert.match(browser.nodes.postgame.innerHTML,/STRIKE \+0[\s\S]*FOUL \+0/);
 assert.equal([...browser.nodes.postgame.innerHTML.matchAll(/<details class="answer-review">/g)].length,7);
 for(const [label,points] of [["WALK",10],["SINGLE",50],["DOUBLE",100],["HOME RUN",200]]) {
   assert.match(browser.nodes.postgame.innerHTML,new RegExp(`${label} · ${points} pts`));
 }
 browser.nodes["start-button"].events.click();
-assert.equal(browser.nodes.score.textContent,"370");
+assert.equal(browser.nodes.score.textContent,"420");
 assert.equal(browser.nodes["game-status"].textContent,"FINAL");
 now=Date.parse("2026-11-20T05:00:00Z");
 browser.tick();
 assert.equal(browser.nodes["panel-day"].textContent,"DAY 02 / 28");
 assert.equal(browser.nodes.score.textContent,"000");
 assert.equal(browser.nodes["timer-value"].textContent,"30");
-assert.equal(JSON.parse([...storage.values()][0]).best,370);
+assert.equal(JSON.parse([...storage.values()][0]).best,420);
 browser.nodes["start-button"].events.click();
 for(const horizontalRoll of [.05,.5,.95]) {
   const rolls=[.9,horizontalRoll,.3];

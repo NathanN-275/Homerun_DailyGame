@@ -16,7 +16,7 @@ Rarity is editorial and stored on each accepted answer. An incorrect, ambiguous,
 
 ## Source decision
 
-Each prompt links to a specific Retrosheet award table, regular season event archive, or postseason result page. The bank uses records through the 2025 season. The batting questions use AL and NL regular season events, including Retrosheet's deduced events. The two Negro Leagues prompts use Retrosheet's Hall of Fame register and the Hall of Fame's list of electees by committee to establish the complete 1971–1973 and 1974–1977 answer sets. [Hall of Fame election methods](https://baseballhall.org/hall-of-fame/hall-of-famers-by-election-method)
+Historical prompts link to Retrosheet award tables, regular season event archives, or postseason result pages through 2025. The 2026 prompts use MLB.com's official award, postseason, and regular-season leader pages. The batting questions use AL and NL regular season events, including Retrosheet's deduced events. The remaining Negro Leagues prompt uses Retrosheet's Hall of Fame register and the Hall of Fame's list of electees by committee to establish the complete 1974–1977 answer set. [Hall of Fame election methods](https://baseballhall.org/hall-of-fame/hall-of-famers-by-election-method)
 
 Retrosheet's data may change as new records become available. The game and this document display the required credit.
 
@@ -28,4 +28,4 @@ Baseball-Reference links in the scorecard provide further reading. [Sports Refer
 
 ## Daily schedule
 
-The shared deck is selected from the Eastern calendar date, using a fixed 28-day cycle beginning November 19, 2026. Each deck starts with two player-name prompts, then one each from batting, pitching, awards, franchise history, and postseason history. Every prompt accepts any one of multiple qualifying answers. The postgame review shows the complete list for each at-bat, with name search and filters for the four scoring tiers. Progress, completion, and the personal best remain in browser storage.
+The shared deck is selected from the Eastern calendar date, using a fixed 28-day cycle beginning November 19, 2026. The cycle starts with the 2026 deck, then runs newest to oldest through the 1999 deck, so 15 of the 28 daily decks cover 2012–2026. Each deck starts with two player-name prompts, then one each from batting, pitching, awards, franchise history, and postseason history. Every prompt accepts any one of multiple qualifying answers. The postgame review shows the complete list for each at-bat, with name search and filters for the four scoring tiers. Progress, completion, and the personal best remain in browser storage.

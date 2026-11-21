@@ -1,6 +1,6 @@
 /*
- * Seven open-answer prompts per day. Season records stop at 2025.
- * Retrosheet supplies the qualifying players and teams. Scoring tiers are editorial.
+ * Seven open-answer prompts per day. Season records stop at 2026.
+ * Retrosheet supplies historical answer sets; MLB.com supplies 2026 results. Scoring tiers are editorial.
  */
 (() => {
   const retrosheetAwards = "https://www.retrosheet.org/boxesetc/MISC/XOH.htm";
@@ -14,7 +14,7 @@
     "Satchel Paige":["Leroy Paige"], "Cool Papa Bell":["James Bell","Cool Papa"], "Pop Lloyd":["John Henry Lloyd"],
     "Paul Waner":["Big Poison"], "Lloyd Waner":["Little Poison"]
   };
-  const years = Array.from({length:28}, (_, i) => 1998+i);
+  const years = [2026, ...Array.from({length:27}, (_, i) => 1999+i)];
   const source = (title, url, cutoff="2025 season") => ({title, url, cutoff});
   const record = (id, category, question, answers, details, ref) => ({
     id, category, question,
@@ -42,7 +42,7 @@
     [2024,"Shohei Ohtani","Aaron Judge"],[2025,"Shohei Ohtani","Aaron Judge"]
   ];
   const cyYoung = [
-    ["Roger Clemens","Tom Glavine"],["Pedro Martinez","Randy Johnson"],
+    ["Cam Schlittler","Jacob Misiorowski"],["Pedro Martinez","Randy Johnson"],
     ["Pedro Martinez","Randy Johnson"],["Roger Clemens","Randy Johnson"],
     ["Barry Zito","Randy Johnson"],["Roy Halladay","Eric Gagne"],
     ["Johan Santana","Roger Clemens"],["Bartolo Colon","Chris Carpenter"],
@@ -58,7 +58,7 @@
     ["Tarik Skubal","Chris Sale"],["Tarik Skubal","Paul Skenes"]
   ];
   const rookie = [
-    ["Kerry Wood","Ben Grieve"],["Scott Williamson","Carlos Beltran"],
+    ["Sal Stewart","Kevin McGonigle"],["Scott Williamson","Carlos Beltran"],
     ["Rafael Furcal","Kazuhiro Sasaki"],["Albert Pujols","Ichiro Suzuki"],
     ["Jason Jennings","Eric Hinske"],["Dontrelle Willis","Angel Berroa"],
     ["Jason Bay","Bobby Crosby"],["Ryan Howard","Huston Street"],
@@ -74,7 +74,7 @@
     ["Paul Skenes","Luis Gil"],["Drake Baldwin","Nick Kurtz"]
   ];
   const worldSeriesTeams = [
-    ["New York Yankees", "San Diego Padres"],
+    ["Milwaukee Brewers", "Tampa Bay Rays"],
     ["New York Yankees", "Atlanta Braves"],
     ["New York Yankees", "New York Mets"],
     ["Arizona Diamondbacks", "New York Yankees"],
@@ -104,14 +104,14 @@
     ["Los Angeles Dodgers", "Toronto Blue Jays"]
   ];
   const worldSeriesMvp = [
-    "Scott Brosius","Mariano Rivera","Derek Jeter",["Randy Johnson","Curt Schilling"],"Troy Glaus","Josh Beckett",
+    "William Contreras","Mariano Rivera","Derek Jeter",["Randy Johnson","Curt Schilling"],"Troy Glaus","Josh Beckett",
     "Manny Ramirez","Jermaine Dye","David Eckstein","Mike Lowell","Cole Hamels","Hideki Matsui",
     "Edgar Renteria","David Freese","Pablo Sandoval","David Ortiz","Madison Bumgarner","Salvador Perez",
     "Ben Zobrist","George Springer","Steve Pearce","Stephen Strasburg","Corey Seager","Jorge Soler",
     "Jeremy Pena","Corey Seager","Freddie Freeman","Yoshinobu Yamamoto"
   ];
   const battingRows = [
-    [1998, "home runs", 56, [["Mark McGwire","walk"], ["Sammy Sosa","single"], ["Ken Griffey Jr.","double"]]],
+    [2026, "home runs", 40, [["Pete Crow-Armstrong","double"], ["Kyle Schwarber","single"], ["Pete Alonso","single"], ["Yordan Alvarez","walk"], ["Junior Caminero","double"], ["Hunter Goodman","home-run"], ["Matt Olson","single"], ["Ben Rice","home-run"]]],
     [1999, "home runs", 63, [["Mark McGwire","single"], ["Sammy Sosa","walk"]]],
     [2000, "doubles", 51, [["Todd Helton","walk"], ["Carlos Delgado","single"], ["Jeff Cirillo","double"], ["Nomar Garciaparra","single"], ["Jose Vidro","home-run"]]],
     [2001, "hits in one game", 6, [["Damion Easley","home-run"], ["Paul Lo Duca","double"]]],
@@ -141,7 +141,7 @@
     [2025, "hits in one game", 6, [["Nick Kurtz","single"], ["Austin Wynns","home-run"]]]
   ];
   const warmupRows = [
-    [1998, "hits", 203, [["Dante Bichette","single"], ["Alex Rodriguez","walk"], ["Craig Biggio","walk"], ["Vinny Castilla","single"], ["Mo Vaughn","single"], ["Derek Jeter","walk"]]],
+    [2026, "home runs", 45, [["Pete Crow-Armstrong","walk"], ["Kyle Schwarber","single"]]],
     [1999, "hits", 200, [["Derek Jeter","walk"], ["B.J. Surhoff","double"], ["Luis Gonzalez","single"], ["Doug Glanville","home-run"], ["Bernie Williams","home-run"], ["Randy Velarde","home-run"]]],
     [2000, "home runs", 44, [["Sammy Sosa","walk"], ["Barry Bonds","walk"], ["Troy Glaus","single"], ["Jeff Bagwell","walk"], ["Vladimir Guerrero","walk"], ["Richard Hidalgo","home-run"]]],
     [2001, "home runs", 49, [["Barry Bonds","walk"], ["Sammy Sosa","walk"], ["Luis Gonzalez","single"], ["Alex Rodriguez","walk"], ["Jim Thome","walk"], ["Shawn Green","single"], ["Todd Helton","walk"]]],
@@ -197,22 +197,20 @@
       [answer(nl,tierByName.get(nl)||"walk"),answer(al,tierByName.get(al)||"single")],
       `${year} AL and NL Most Valuable Players.`,awardsRef("A4"))
   );
-  const negroHallSource={
-    ...awardsRef("A1"),
-    corroboration:"https://baseballhall.org/hall-of-fame/hall-of-famers-by-election-method"
-  };
-  mvpQuestions[0]=record("negro-leagues-hof-1971-73","player",
-    "Name a player the Negro Leagues committee elected to the Hall of Fame from 1971 through 1973.",
-    [answer("Satchel Paige"),answer("Josh Gibson"),answer("Buck Leonard","double"),answer("Monte Irvin","home-run")],
-    "Paige was the committee’s first electee in 1971. Gibson and Leonard followed in 1972, then Irvin in 1973.",
-    negroHallSource);
+  mvpQuestions[0]=record("player-2026-mvp","player",
+    "Name a player who won the AL or NL MVP Award in 2026.",
+    [answer("Yordan Alvarez","walk"),answer("Pete Crow-Armstrong","single")],
+    "Yordan Alvarez won the American League MVP Award, and Pete Crow-Armstrong won the National League award.",
+    source("MLB.com 2026 MVP results","https://www.mlb.com/news/2026-mlb-mvp-award-winners","2026 season"));
   mvpQuestions[27]=record("player-2023-25-mvp","player",
     "Name a player who won the AL or NL MVP Award from 2023 through 2025.",
     [answer("Shohei Ohtani"),answer("Aaron Judge"),answer("Ronald Acuna Jr.","single")],
     "Both leagues’ MVP winners from those three seasons qualify.",awardsRef("A4"));
 
   function battingPrompt(id,category,[year,stat,minimum,answers]) {
-    const ref=source(`Retrosheet ${year} regular season event files`,`https://www.retrosheet.org/events/${year}eve.zip`);
+    const ref=year===2026
+      ? source("MLB.com 2026 regular season home run leaders","https://www.mlb.com/stats/home-runs/regular-season/2026","2026 season")
+      : source(`Retrosheet ${year} regular season event files`,`https://www.retrosheet.org/events/${year}eve.zip`);
     const clue=stat==="hits in one game"
       ? `Name an AL or NL player who had at least ${minimum} hits in a game during the ${year} regular season.`
       : `Name an AL or NL player with at least ${minimum} ${stat} in the ${year} regular season.`;
@@ -221,6 +219,10 @@
     return {...prompt,stat};
   }
   const warmups=warmupRows.map((row,index)=>battingPrompt(`player-${years[index]}-batting`,"player",row));
+  const negroHallSource={
+    ...awardsRef("A1"),
+    corroboration:"https://baseballhall.org/hall-of-fame/hall-of-famers-by-election-method"
+  };
   warmups[13]=record("negro-leagues-hof-1974-77","player",
     "Name a player the Negro Leagues committee elected to the Hall of Fame from 1974 through 1977.",
     [answer("Cool Papa Bell"),answer("Judy Johnson","double"),answer("Oscar Charleston","single"),
@@ -229,12 +231,18 @@
     negroHallSource);
   const batting=battingRows.map((row,index)=>battingPrompt(`batting-${index+1}`,"batting",row));
   const pitching = cyYoung.map(([al,nl],i)=>{
-    const year=1998+i;
-    return record(`pitching-${year}`,"pitching",`Name a Cy Young Award winner from ${year}.`,[answer(al,tierByName.get(al)||"walk"),answer(nl,tierByName.get(nl)||"single")],`${year} American and National League Cy Young Award winners.`,awardsRef("A5"));
+    const year=years[i];
+    const ref=year===2026
+      ? source("MLB.com 2026 Cy Young results","https://www.mlb.com/news/2026-mlb-cy-young-award-winners","2026 season")
+      : awardsRef("A5");
+    return record(`pitching-${year}`,"pitching",`Name a Cy Young Award winner from ${year}.`,[answer(al,tierByName.get(al)||"walk"),answer(nl,tierByName.get(nl)||"single")],`${year} American and National League Cy Young Award winners.`,ref);
   });
   const awards = rookie.map(([nl,al],i)=>{
-    const year=1998+i;
-    return record(`awards-${year}`,"awards",`Name a Rookie of the Year Award winner from ${year}.`,[answer(nl,tierByName.get(nl)||"single"),answer(al,tierByName.get(al)||"walk")],`${year} National and American League Rookie of the Year winners.`,awardsRef("A6"));
+    const year=years[i];
+    const ref=year===2026
+      ? source("MLB.com 2026 Rookie of the Year results","https://www.mlb.com/news/2026-mlb-rookie-of-the-year-award-winners","2026 season")
+      : awardsRef("A6");
+    return record(`awards-${year}`,"awards",`Name a Rookie of the Year Award winner from ${year}.`,[answer(nl,tierByName.get(nl)||"single"),answer(al,tierByName.get(al)||"walk")],`${year} National and American League Rookie of the Year winners.`,ref);
   });
   const teamAliases={
     "Anaheim Angels":["Los Angeles Angels","Angels"], "Florida Marlins":["Miami Marlins","Marlins"],
@@ -245,8 +253,10 @@
     "Cleveland Indians":["Cleveland Guardians","Indians","Guardians"], "Tampa Bay Rays":["Rays","Devil Rays"]
   };
   const franchises = worldSeriesTeams.map(([winner,runnerUp],i)=>{
-    const year=1998+i;
-    const ref=source(`Retrosheet ${year} postseason results`,`https://www.retrosheet.org/boxesetc/${year}/YPS_${year}.htm`);
+    const year=years[i];
+    const ref=year===2026
+      ? source("MLB.com 2026 postseason results","https://www.mlb.com/postseason/history/2026","2026 postseason")
+      : source(`Retrosheet ${year} postseason results`,`https://www.retrosheet.org/boxesetc/${year}/YPS_${year}.htm`);
     const answers=[winner,runnerUp].map((team,index)=>
       answer(team,tierByName.get(team)||(index===0?"walk":"single"),teamAliases[team]||[team.split(" ").at(-1)])
     );
@@ -254,15 +264,19 @@
       answers,`${winner} beat ${runnerUp} in the ${year} World Series.`,ref);
   });
   const postseason = worldSeriesMvp.map((winners,i)=>{
-    const year=1998+i;
-    const previous=i===0?"Livan Hernandez":worldSeriesMvp[i-1];
-    const names=[...new Set([previous,winners].flat())];
-    return record(`postseason-${year}`,"postseason",`Name a World Series MVP from ${year-1} or ${year}.`,
+    const year=years[i];
+    const previous=i===0?["Yoshinobu Yamamoto"]:i===1?["Scott Brosius"]:[worldSeriesMvp[i-1]].flat();
+    const names=[...new Set([...previous,...[winners].flat()])];
+    const ref=year===2026
+      ? source("MLB.com 2026 World Series MVP","https://www.mlb.com/awards/postseason","2026 postseason")
+      : awardsRef("A10");
+    const period=`${year-1} or ${year}`;
+    return record(`postseason-${year}`,"postseason",`Name a World Series MVP from ${period}.`,
       names.map(name=>answer(name,tierByName.get(name)||"single")),
-      `World Series MVPs from either ${year-1} or ${year} qualify.`,awardsRef("A10"));
+      `World Series MVPs from ${period} qualify.`,ref);
   });
   const all = [...mvpQuestions,...warmups,...batting,...pitching,...awards,...franchises,...postseason];
-  const decks = years.map((year,i)=>[
+  const decks = [0,...Array.from({length:27},(_,i)=>27-i)].map(i=>[
     mvpQuestions[i],warmups[i],batting[i],pitching[i],awards[i],franchises[i],postseason[i]
   ]);
   window.HOMERUN_BANK = {all,decks,cycleStart:"2026-11-19"};

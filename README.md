@@ -21,4 +21,4 @@ node verify.mjs
 python3 verify-sources.py /tmp/homerun-retrosheet
 ```
 
-The first command checks all daily decks and exercises the game controller with a simulated clock. The source audit downloads and caches public Retrosheet records and the Hall of Fame election list, then compares all 196 answer sets against those records.
+The first command checks all daily decks and exercises the game controller with a simulated clock. The source audit downloads and caches public Retrosheet records and the Hall of Fame election list for the historical answer sets. The seven 2026 question sets link directly to MLB.com sources.

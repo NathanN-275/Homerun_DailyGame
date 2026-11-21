@@ -110,19 +110,24 @@ def main(cache):
                 path.write_bytes(response.read())
         return path.read_bytes()
 
-    urls = {url.split("#")[0] for prompt in bank for key, url in prompt["source"].items()
-            if key in ("url", "corroboration")}
+    urls = {url.split("#")[0] for prompt in bank
+            if urlsplit(prompt["source"]["url"]).netloc != "www.mlb.com"
+            for key, url in prompt["source"].items() if key in ("url", "corroboration")}
     with ThreadPoolExecutor(max_workers=6) as pool:
         sources = dict(zip(urls, pool.map(download, urls)))
     discrepancies = []
+    official_sources = 0
     for prompt in bank:
+        if urlsplit(prompt["source"]["url"]).netloc == "www.mlb.com":
+            official_sources += 1
+            continue
         expected = expected_answers(prompt, lambda url: sources[url.split("#")[0]])
         actual = {answer["name"] for answer in prompt["answers"]}
         if not expected or {normalized(name) for name in actual} != {normalized(name) for name in expected}:
             discrepancies.append(f"{prompt['id']}: bank {sorted(actual)} vs. source {sorted(expected)}")
     if discrepancies:
         sys.exit("\n".join(discrepancies))
-    print(f"Verified all {len(bank)} historical answer sets against Retrosheet and the Baseball Hall of Fame.")
+    print(f"Verified {len(bank)-official_sources} historical answer sets against Retrosheet and the Baseball Hall of Fame; {official_sources} 2026 answer sets link to official MLB.com sources.")
 
 
 if __name__ == "__main__":
